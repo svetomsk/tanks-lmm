@@ -5,10 +5,10 @@ import android.util.Log;
 import game.input.*;
 public class Field 
 {
-	private int width, height; // ширина и высота экрана в пикселях
-	private byte pole [][]; // зона игры. один пиксель - одна ячейка.
-	private int row, col; // ширина и высота одного моноблока
-	private Separator sep; // класс, отвечающий за чтение из файла и интерпретацию входных данных
+	private int width, height; // С€РёСЂРёРЅР° Рё РІС‹СЃРѕС‚Р°
+	private byte pole [][]; // СЃРѕР±СЃС‚РІРµРЅРЅРѕ РјР°СЃСЃРёРІ СЃ РїРѕР»РµРј.
+	private int row, col; // С€РёСЂРёРЅР° РєРѕР»РѕРЅРєРё Рё СЃС‚РѕР»Р±РёРєР°
+	private Separator sep; // РєР»Р°СЃСЃ, СЂР°Р·Р±РёСЂР°СЋС‰РёР№ РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ
 	
 	public Field(int width, int height)
 	{
@@ -17,11 +17,11 @@ public class Field
 		sep = new Separator();
 	}
 	
-	public void genMap(char source) throws IOException // создание карты
+	public void genMap(char source) throws IOException // СЃРѕР·РґР°РµРј РєР°СЂС‚Сѓ
 	{
 		String name = "map" + source + ".txt";
-		byte [][] temp = sep.interpritation(name); // собственно интерпетация
-		setRow(); setCol(); // устанавливаем высоту и ширину моноблоков
+		byte [][] temp = sep.interpritation(name); // РѕР±СЂР°Р±РѕС‚С‹РІР°РµРј РІРІРѕРґ
+		setRow(); setCol(); // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј С€РёСЂРёРЅСѓ Рё РІС‹СЃРѕС‚Сѓ СЏС‡РµР№РєРё
 		pole = new byte[col * sep.Y][row * sep.X];
 		for(int i = 0; i < sep.Y; i++)
 		{
@@ -35,23 +35,10 @@ public class Field
 					}
 				}
 			}
-		}
-		
-		//РАЗОБРАТЬСЯ С РАБОТОЙ С ФАЙЛОВОЙ СИСТЕМОЙ
-		FileWriter fw = new FileWriter("out.txt");
-		Log.d("name", "lsfjsa;fjsaf");
-		for(int i = 0; i < pole.length; i++)
-		{
-			for(int g = 0; g < pole[0].length; g++)
-			{
-				Log.d(Integer.toString(i) + " " + Integer.toString(g), Byte.toString(pole[i][g]));
-			}
-			//fw.write("\r\n");
-		}
-		fw.close();
+		}		
 	}
 	
-	private void setRow() // определяем высоту моноблока
+	private void setRow()
 	{
 		row = height;
 		while(row % sep.X != 0)
@@ -59,7 +46,7 @@ public class Field
 		row /= sep.X;
 	}
 	
-	private void setCol() // определяем ширину моноблока
+	private void setCol() 
 	{
 		col = width;
 		while(col % sep.Y != 0)

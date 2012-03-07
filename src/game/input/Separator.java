@@ -4,9 +4,9 @@ public class Separator
 {
 	private BufferedReader bufreader;
 	private byte [][] mas;
-	public static int X, Y; // количество моноблоков по высоте и ширине
+	public static int X, Y; // РєРѕР»-РІРѕ РїРѕ С€РёСЂРёРЅРµ Рё РІС‹СЃРѕС‚Рµ
 		
-	public byte[][] interpritation(String name) throws IOException // преобразуем входные данные в byte
+	public byte[][] interpritation(String name) throws IOException // РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РІ РјР°СЃСЃРёРІ byte
 	{
 		bufreader = new BufferedReader(new FileReader(name));
 		String read [] = bufreader.readLine().split(" ");
