@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="map1">
+        <item name="width">8</item>
+        <item name="height">8</item>
+        <item name="struct">
+            wwwooooo
+            ooowwwow
+            wooowoww
+            owowowwo
+            wowowoow
+            wowowowo
+            wowowowo
+            owowowow</item>
+    </string-array> 
+    
+</resources>
