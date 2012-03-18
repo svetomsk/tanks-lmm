@@ -1,21 +1,46 @@
 package game.main;
-import game.graphics.*;
+
+import game.field.Field;
+import game.graphics.MainView;
+import game.input.Separator;
 import game.tanks.R;
+
+import java.io.IOException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
 public class TanksActivity extends Activity {
-    /** Called when the activity is first created. */
+	Field f;
+	Separator sp;
+	MainView mw;
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);  
+        setContentView(R.layout.main);          
+        
     }
     
     public void newgameButtonEvent(View w)
     {
-    	// actions to start new game
+    	sp = new Separator(getResources());
+        try 
+        {
+			sp.interpritation(1);
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+        try {
+			f = new Field(sp.interpritation(1));
+		} catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+        mw = new MainView(this, f);
+    	setContentView(mw);
     }
     
     public void aboutButtonEvent(View w)
