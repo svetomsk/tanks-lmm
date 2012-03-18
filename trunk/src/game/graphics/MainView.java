@@ -65,8 +65,10 @@ public class MainView extends View
 			y = oldy + ev.getY() - cury;
 			if(x > 0) x = 0;
 			if(y > 0) y = 0;	
-			if(x < (-f.width*k*length+width)) x = -f.width*k*length+width;
-			if(y < (-f.height*k*length+height)) y = -f.height*k*length+height;
+			int w = f.width * k * length;
+			int h = f.height * k * length;
+			if(x < (width - w)) x = width - w;
+			if(y < (height - h)) y = height - h;
 			invalidate();			
 		}
 		if(ev.getAction() == MotionEvent.ACTION_DOWN)
