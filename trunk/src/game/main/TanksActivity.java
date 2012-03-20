@@ -14,7 +14,7 @@ import android.view.View;
 public class TanksActivity extends Activity {
 	Field f;
 	Separator sp;
-	MainView mw;
+	MainView mv;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -39,8 +39,8 @@ public class TanksActivity extends Activity {
 		{
 			e.printStackTrace();
 		}
-        mw = new MainView(this, f);
-    	setContentView(mw);
+        mv = new MainView(this, f);        
+    	setContentView(mv);
     }
     
     public void aboutButtonEvent(View w)

@@ -2,17 +2,64 @@
 <resources>
     
     <string-array name="map1">
-        <item name="width">8</item>
-        <item name="height">8</item>
+        <item name="width">50</item>
+        <item name="height">54</item>
         <item name="struct">
-            wwwooooo
-            ooowwwow
-            wooowoww
-            owowowwo
-            wowowoow
-            wowowowo
-            wowowowo
-            owowowow</item>
+            w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w
+            w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w
+			w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w
+			w w w o o o o w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w w w w w w w w w w w w w w o w w w o o w w w o o o w w w w w w w w w w w w w w w w w w w w w w
+            w w w w w w w w w w w w w w w w o w w w o o w w w o o o w w w w w w w w w w w w w w w w w w w w w w
+			w w w w w w w w w w w w w w w w o w w w o o w w w o o o w w w w w w w w w w w w w w w w w w w w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+		    w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o o w w w
+			w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w
+			w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w
+			w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w
+            </item>
     </string-array> 
     
 </resources>
