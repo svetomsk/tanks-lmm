@@ -10,6 +10,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -57,5 +58,15 @@ public class TanksActivity extends Activity {
     {
     	// may be saving or simply exit
     	System.exit(0);
+    }
+    
+    @Override 
+    public boolean onKeyDown(int keykode, KeyEvent ke)
+    {
+    	if(keykode == KeyEvent.KEYCODE_BACK)
+    	{
+    		setContentView(R.layout.main);
+    	}
+    	return true;
     }
 }
