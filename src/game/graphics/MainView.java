@@ -1,26 +1,30 @@
 package game.graphics;
 
 import game.field.*;
+import game.tank.AbstractTank;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class MainView extends View
 {
-	final int k = 10;
+	final int k = 3;
 	float x=0, y=0;
 	float curx=0, cury=0;
 	float oldx = 0, oldy=0;
 	float width, height;
 	int length = 10; 
 	Field f;
+	AbstractTank t;
 	public MainView(Context c, Field df)
 	{
 		super(c);
 		f = df;
+		t=new AbstractTank(df, "Big", 5, 5);
 	}	
 	
 	public void onDraw(Canvas c)
@@ -31,6 +35,7 @@ public class MainView extends View
 	public void render(Canvas c)
 	{
 		renderField(c);	
+		renderTank(t, c);
 	}	
 	
 	public void renderField(Canvas s)
@@ -45,15 +50,26 @@ public class MainView extends View
 			}
 		}
 	}
+	public void renderTank(AbstractTank at, Canvas s)
+	{
+		Paint p = new Paint();
+		p.setColor(Color.GREEN);
+		s.drawRect(at.getX()*k*length+x, at.getY()*k*length+y, (at.getX()+at.getWidth())*k*length+x, (at.getY()+at.getLength())*k*length+y, p);
+	}
+	
 	public int revers(int i, int g, Field f)
 	{
-		switch(f.get(i, g))
+		switch(f.get(g, i))
 		{
-			case 0 : return Color.DKGRAY;
-			case 1 : return Color.BLACK;
+			case 0 : return Color.BLACK;	
+			case 1 : return Color.DKGRAY;
 			case 2 : return Color.rgb(151, 76, 24);
 		}
 		return Color.RED;
+	}
+	public int getLength()
+	{
+		return length;
 	}
 	
 	@Override
@@ -75,7 +91,8 @@ public class MainView extends View
 		{
 			curx = ev.getX();
 			cury = ev.getY();
-			
+			t.goDown();					
+			invalidate();
 		}
 		if(ev.getAction() == MotionEvent.ACTION_UP)
 		{

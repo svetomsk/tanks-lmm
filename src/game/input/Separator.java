@@ -32,10 +32,20 @@ public class Separator
 			{
 				char a = work.charAt(t);
 				if(a == ' ') {g--;}
-				if(a == 'o') mas[i][g] = 1;
+				if(a == 'o') mas[i][g] = 0;
 				if(a == 'w') mas[i][g] = 2;				
 				t++;
 			}
+		}
+		for(int q=0;q<Y+2;q++)
+		{
+			mas[q][0] = 1;
+			mas[q][X+1] = 1;			
+		}
+		for(int q=0;q<X+2;q++)
+		{
+			mas[0][q] = 1;
+			mas[Y+1][q] = 1;			
 		}
 		return mas;
 	}
