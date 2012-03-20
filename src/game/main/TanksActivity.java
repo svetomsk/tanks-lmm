@@ -8,8 +8,11 @@ import game.tanks.R;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class TanksActivity extends Activity {
 	Field f;
@@ -18,9 +21,11 @@ public class TanksActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);          
-        
+        super.onCreate(savedInstanceState);                
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setContentView(R.layout.main);  
     }
     
     public void newgameButtonEvent(View w)
