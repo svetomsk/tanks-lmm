@@ -74,7 +74,7 @@ public class MainView extends View
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) 
-	{
+	{		
 		if(ev.getAction() == MotionEvent.ACTION_MOVE)
 		{	
 			x = oldx + ev.getX() - curx;
@@ -91,7 +91,32 @@ public class MainView extends View
 		{
 			curx = ev.getX();
 			cury = ev.getY();
-			t.goDown();					
+			int size = k * length;
+			int xt = t.getX()*size;
+			int yt = t.getY()*size;
+			int wt = t.getWidth()*size;
+			if(curx - x>=  xt && curx - x <= xt + wt)
+			{
+				if(cury - y>= yt)
+				{
+					t.goDown();
+				}
+				else
+				{
+					t.goUp();
+				}
+			}
+			else if(cury - y>= yt && cury - y<= yt + wt)
+			{
+				if(curx - x>= xt)
+				{
+					t.goRight();
+				}
+				else
+				{
+					t.goLeft();
+				}
+			}			
 			invalidate();
 		}
 		if(ev.getAction() == MotionEvent.ACTION_UP)
