@@ -22,13 +22,14 @@ public class TanksActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);                
+        super.onCreate(savedInstanceState);             
+        // убираем верхушку 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.main);  
     }
-    
+    // слушатель кнопки Start
     public void newgameButtonEvent(View w)
     {
     	sp = new Separator(getResources());
@@ -45,21 +46,23 @@ public class TanksActivity extends Activity {
 		{
 			e.printStackTrace();
 		}
-        mv = new MainView(this, f);        
+        mv = new MainView(this, f, R.drawable.control);        
     	setContentView(mv);
     }
     
+    // слушатель кнопки About
     public void aboutButtonEvent(View w)
     {
     	//showing information about game
     }
-    
+    // слушатель кнопки Exit
     public void exitButtonEvent(View w)
     {
     	// may be saving or simply exit
     	System.exit(0);
     }
     
+    // аккуратный выход в меню. 
     @Override 
     public boolean onKeyDown(int keykode, KeyEvent ke)
     {
