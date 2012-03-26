@@ -110,7 +110,7 @@ public class MainView extends View
 		{
 			curx = ev.getX();
 			cury = ev.getY();
-			if(curx < 200 && cury > height - ch) // если тыкнул на джойстик
+			if(curx < cw && cury > height - ch) // если тыкнул на джойстик
 			{
 				replaceTank(); // перемещение танка
 			}
