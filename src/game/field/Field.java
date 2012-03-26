@@ -1,8 +1,8 @@
 package game.field;
 public class Field 
 {
-	private byte [][] pole;
-	public int width, height;
+	private byte [][] pole; // собственно поле
+	public int width, height; // ширина и высота
 	
 	public Field(byte[][] array)
 	{
@@ -11,11 +11,11 @@ public class Field
 		height = array.length;		
 	}
 	
-	public int get(int x, int y)
+	public int get(int x, int y) // возвращает содержимое определенной ячейки
 	{
 		return pole[y][x];
 	}	
-	public void explode(int x, int y)
+	public void explode(int x, int y) // взрыв
 	{
 		pole[y][x] = 0;
 		return;
