@@ -1,6 +1,8 @@
 package game.graphics;
 
 import game.field.Field;
+import game.main.Game;
+import game.tank.AbstractShell;
 import game.tank.AbstractTank;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,34 +11,40 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class MainView extends View
 {
-	final int k = 3;
+	final int k = 2;
 	float x=0, y=0;
 	float curx=0, cury=0;
 	float oldx = 0, oldy=0;
 	float width, height;
 	int length = 10; 
 	
+	Game game;
+	
 	Bitmap js; // битмэп для джойстика
 	
-	Field f; // поле для отрисовки
+//	Field f; // поле для отрисовки
 	
-	AbstractTank t; // танк
+//	AbstractTank t; // танк
 	
 	int control, cw = 200, ch = 200; // собственно джойстик, его ширина и высота
 	
 	public MainView(Context c, Field df, int control)
 	{
 		super(c);
-		f = df;
+		game = new Game(df, 5, 5, "Normal", this);
 		this.control = control;
-		t=new AbstractTank(df, "Normal", 5, 5);
 	}	
 	
+	public void view()
+	{
+		invalidate();
+	}
 	public void onDraw(Canvas c)
 	{
 		render(c);
@@ -45,36 +53,66 @@ public class MainView extends View
 	public void render(Canvas c)
 	{
 		renderField(c);	
-		renderTank(t, c);
+//		renderTank(game.getMainTank(), c);
+		renderTanks(c);
+//		renderShells(c);
 		renderJoystick(c);
 	}	
 	
 	public void renderField(Canvas s) // рисуем поле
 	{
 		Paint p = new Paint();
-		for(int i = 0; i < f.height; i++)
+		for(int i = 0; i < game.getField().height; i++)
 		{
-			for(int j = 0; j < f.width; j++)
+			for(int j = 0; j < game.getField().width; j++)
 			{
-				p.setColor(revers(i, j, f));				
+				p.setColor(revers(i, j, game.getField()));				
 				s.drawRect(j*length*k + x, i*length*k + y, (j+1)*length*k + x, (i+1)*length*k + y, p);
 			}
 		}
 	}
+	public void renderTanks(Canvas s)
+	{
+		Paint p = new Paint();
+		p.setColor(Color.GREEN);
+		
+		for(int q=0;q<game.getField().getHeight();q++)
+		{
+			for(int w=0;w<game.getField().getWidth();w++)
+			{
+				if(game.getTField().get(w, q) != null) s.drawRect(w*length*k + x, q*length*k + y, (w+1)*length*k + x, (q+1)*length*k + y, p);
+			}
+		}
+	}
+	public void renderShells(Canvas s)
+	{
+		Paint p = new Paint();
+		p.setColor(Color.RED);
+		Log.d("000000000", "Rendering");
+		Log.d("000000000", "x, y: "+game.getShells().get(0).getGX()+", "+game.getShells().get(0).getGY());
+		for(int q=0;q<game.getShells().size();q++)
+		{
+			Log.d("000000000", "Rendering..");
+			float xs = x+game.getShells().get(q).getGX()*length*k+(game.getShells().get(q).getLX()*length*k)/game.getShells().get(q).getSize();
+			float ys = y+game.getShells().get(q).getGY()*length*k+(game.getShells().get(q).getLY()*length*k)/game.getShells().get(q).getSize();
+			s.drawRect(xs, ys, xs+length*k/game.getShells().get(q).getSize(), ys+length*k/game.getShells().get(q).getSize(), p);
+			Log.d("000000000", "Rendered");
+		}
+	}
+	
 	
 	public void renderJoystick(Canvas s) // добавляем джойстик
-	{
-		
+	{		
 		js = BitmapFactory.decodeResource(getResources(), control);
 		s.drawBitmap(js, null, new Rect(0, (int)height - ch, cw, (int)height), null);
 	}
 	
-	public void renderTank(AbstractTank at, Canvas s) // рисуем танк
-	{
-		Paint p = new Paint();
-		p.setColor(Color.GREEN);
-		s.drawRect(at.getX()*k*length+x, at.getY()*k*length+y, (at.getX()+at.getWidth())*k*length+x, (at.getY()+at.getLength())*k*length+y, p);
-	}
+//	public void renderTank(AbstractTank at, Canvas s) // рисуем танк
+//	{
+//		Paint p = new Paint();
+//		p.setColor(Color.GREEN);
+//		s.drawRect(at.getX()*k*length+x, at.getY()*k*length+y, (at.getX()+at.getWidth())*k*length+x, (at.getY()+at.getLength())*k*length+y, p);
+//	}
 	
 	public int revers(int i, int g, Field f) // преобразование числа в соответствующий цвет
 	{
@@ -100,8 +138,8 @@ public class MainView extends View
 			y = oldy + ev.getY() - cury;
 			if(x > 0) x = 0;
 			if(y > 0) y = 0;	
-			int w = f.width * k * length;
-			int h = f.height * k * length;
+			int w = game.getField().width * k * length;
+			int h = game.getField().height * k * length;
 			if(x < (width - w)) x = width - w;
 			if(y < (height - h)) y = height - h;
 			invalidate();			
@@ -130,19 +168,19 @@ public class MainView extends View
 		int turn = controlAction(curx, cury);
 		if(turn == 1)
 		{
-			t.goUp();
+			game.getMainTank().goUp();
 		}
 		if(turn == 2)
 		{
-			t.goRight();
+			game.getMainTank().goRight();
 		}
 		if(turn == 3)
 		{
-			t.goDown();
+			game.getMainTank().goDown();
 		}
 		if(turn == 4)
 		{
-			t.goLeft();
+			game.getMainTank().goLeft();
 		}
 	}
 	

@@ -20,4 +20,12 @@ public class Field
 		pole[y][x] = 0;
 		return;
 	}
+	public int getWidth()
+	{
+		return width;
+	}
+	public int getHeight()
+	{
+		return height;
+	}
 }
