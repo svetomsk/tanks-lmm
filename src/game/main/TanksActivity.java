@@ -10,6 +10,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -33,19 +34,7 @@ public class TanksActivity extends Activity {
     public void newgameButtonEvent(View w)
     {
     	sp = new Separator(getResources());
-        try 
-        {
-			sp.interpritation(1);
-		} catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-        try {
-			f = new Field(sp.interpritation(1));
-		} catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
+		f = new Field(sp.interpritaitonPicture(1));
         mv = new MainView(this, f, R.drawable.control);        
     	setContentView(mv);
     }
