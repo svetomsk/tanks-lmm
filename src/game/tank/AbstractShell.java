@@ -8,6 +8,7 @@ public class AbstractShell {
 	private int lx, ly;
 	private AbstractTank at;
 	private int loc;
+	private int power;
 	
 	public AbstractShell(int gx, int gy, int lx, int ly, int stepx, int stepy, AbstractTank at, int loc)
 	{
@@ -21,6 +22,8 @@ public class AbstractShell {
 		
 		this.at = at;
 		this.loc = loc;
+		
+		power = 3;
 	}
 	
 	public void step()
@@ -33,7 +36,10 @@ public class AbstractShell {
 		if(ly>=loc) { ly-=loc; gy++; }
 		if(ly<0) { ly+=loc; gy--; }
 	}
-	
+	public int getPower()
+	{
+		return power;
+	}
 	public int getGX()
 	{
 		return gx;

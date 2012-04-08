@@ -1,5 +1,6 @@
 package game.main;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +20,7 @@ public class Game {
 	private AbstractTank mainTank;
 	private Field field;
 	private TanksField tfield;
-	private List<AbstractShell> shells;
+	private ArrayList<AbstractShell> shells;
 	
 	public Game(Field f, int xm, int ym, String typem, MainView mv)
 	{
@@ -27,27 +28,55 @@ public class Game {
 		tfield = new TanksField(f.getWidth(), f.getHeight());
 		mainTank = new AbstractTank(typem, xm, ym, this);
 		tfield.spawnTank(mainTank);
-		tfield.spawnTank(new AbstractTank("Big", 10, 4, this));
+		tfield.spawnTank(new AbstractTank("Big", 10, 3, this));
 		view = mv;
 		
-//		shells = new List<AbstractShell>() {};
+		shells = new ArrayList<AbstractShell>() {};
 //		Log.d("000000000", "Shooting");
-//		shoot(new AbstractShell(9, 9, 0, 0, 4, 4, mainTank, 16));
-		
-//		start();
+		shoot(new AbstractShell(3, 3, 0, 0, 1 , 1, mainTank, 3));
+		shoot(new AbstractShell(2, 3, 0, 0, 1, 1, mainTank, 3));
+		shellThread();
 	}
 	
-	private void start()
+	public void shellThread()
 	{
-		while(true)
+		new Thread(new Runnable()
 		{
-			for(int q=0;q<getShells().size();q++)
+			public void run()
 			{
-				getShells().get(q).step();
-//				if(field.get(getShells().get(q).getGX(), getShells().get(q).getGY()) != 0 ||)
-			}		
-			view.view();
-		}	
+				while(true)
+				{
+					for(int i = 0; i < shells.size(); i++)
+					{
+						AbstractShell as = shells.get(i);
+						as.step();
+						if(isExplode(as))
+						{
+							explode(as.getGX(), as.getGY(), as.getPower());
+//							shells.remove(i);
+						}
+					}
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						Log.d("EXCEPTION", "LINE 67 G");
+					}
+				}
+			}
+		}).start();
+	}
+	
+	private boolean isExplode(AbstractShell as)
+	{
+		if(field.isExplodable(as.getGX(), as.getGY())) return true;
+		if(tfield.get(as.getGX(), as.getGY()) != null ) return true;
+		return false;
+	}
+	
+	public void explode(int x, int y, int power)
+	{
+		field.explode(x, y, power);
+//		tfield.explode(tfield.get(x, y));
 	}
 	
 	public void shoot(AbstractShell shell)
@@ -56,7 +85,7 @@ public class Game {
 		Log.d("000000000", "Shooted");
 	}
 
-	public List<AbstractShell> getShells()
+	public ArrayList<AbstractShell> getShells()
 	{
 		return shells;
 	}

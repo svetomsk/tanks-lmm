@@ -23,6 +23,22 @@ public class TanksField {
 			}
 		}
 	}
+	
+	public void explode(AbstractTank at)
+	{
+		if(at == null) return;
+		int x = at.getX();
+		int y = at.getY();
+		int width = at.getWidth();
+		for(int i = 0; i < width; i++)
+		{
+			for(int g = 0; g < width; g++)
+			{
+				arr[x+i][y+g] = null;
+			}
+		}
+	}
+	
 	public void goLeft(AbstractTank at)
 	{
 		int x = at.getX();

@@ -54,12 +54,14 @@ public class Separator
 		}
 		return mas;
 	}
+//	private final int COLOR_1;
+//	private final int COLOR_2;
 	
 	public byte[][] interpritaitonPicture(int name) 
 	{
 		Bitmap pic = null;
 		if(name == 1) { pic = BitmapFactory.decodeResource(r, R.drawable.map1); }
-		if(name == 2) { pic = BitmapFactory.decodeResource(r, R.drawable.map2); }
+	//	if(name == 2) { pic = BitmapFactory.decodeResource(r, R.drawable.map2); }
 		
 		Y = pic.getHeight();
 		X = pic.getWidth();
