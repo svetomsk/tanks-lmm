@@ -17,13 +17,12 @@ import android.view.View;
 
 public class MainView extends View
 {
-	final int k = 2;
 	float x=0, y=0;
 	float curx=0, cury=0;
 	float oldx = 0, oldy=0;
 	float width, height;
-	int length = 10; 
-	
+	int length = 13;
+	int FPS = 50;
 	Game game;
 	
 	Bitmap js; // битмэп для джойстика
@@ -37,13 +36,33 @@ public class MainView extends View
 	public MainView(Context c, Field df, int control)
 	{
 		super(c);
-		game = new Game(df, 5, 5, "Normal", this);
+		game = new Game(df, 10, 3, "Normal", this);
 		this.control = control;
-	}	
+		repaintThread();
+	}
 	
-	public void view()
-	{
-		invalidate();
+	
+	public void repaintThread()
+	{		
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				while(true)
+				{
+					postInvalidate();
+					Log.d("FFFFFFFFFFFFFFFFFUUUUUUUUUU", "repaint!");
+					try
+					{
+						Thread.sleep(200/FPS);
+					}catch(InterruptedException exs)
+					{
+						Log.d("EXCEPTION", "LINE 55 MV");
+					}
+				}
+			}
+		}).start();
 	}
 	public void onDraw(Canvas c)
 	{
@@ -55,7 +74,7 @@ public class MainView extends View
 		renderField(c);	
 //		renderTank(game.getMainTank(), c);
 		renderTanks(c);
-//		renderShells(c);
+		renderShells(c);
 		renderJoystick(c);
 	}	
 	
@@ -67,7 +86,7 @@ public class MainView extends View
 			for(int j = 0; j < game.getField().width; j++)
 			{
 				p.setColor(revers(i, j, game.getField()));				
-				s.drawRect(j*length*k + x, i*length*k + y, (j+1)*length*k + x, (i+1)*length*k + y, p);
+				s.drawRect(j*length + x, i*length + y, (j+1)*length + x, (i+1)*length + y, p);
 			}
 		}
 	}
@@ -80,7 +99,7 @@ public class MainView extends View
 		{
 			for(int w=0;w<game.getField().getWidth();w++)
 			{
-				if(game.getTField().get(w, q) != null) s.drawRect(w*length*k + x, q*length*k + y, (w+1)*length*k + x, (q+1)*length*k + y, p);
+				if(game.getTField().get(w, q) != null) s.drawRect(w*length + x, q*length + y, (w+1)*length + x, (q+1)*length + y, p);
 			}
 		}
 	}
@@ -88,15 +107,11 @@ public class MainView extends View
 	{
 		Paint p = new Paint();
 		p.setColor(Color.RED);
-		Log.d("000000000", "Rendering");
-		Log.d("000000000", "x, y: "+game.getShells().get(0).getGX()+", "+game.getShells().get(0).getGY());
 		for(int q=0;q<game.getShells().size();q++)
 		{
-			Log.d("000000000", "Rendering..");
-			float xs = x+game.getShells().get(q).getGX()*length*k+(game.getShells().get(q).getLX()*length*k)/game.getShells().get(q).getSize();
-			float ys = y+game.getShells().get(q).getGY()*length*k+(game.getShells().get(q).getLY()*length*k)/game.getShells().get(q).getSize();
-			s.drawRect(xs, ys, xs+length*k/game.getShells().get(q).getSize(), ys+length*k/game.getShells().get(q).getSize(), p);
-			Log.d("000000000", "Rendered");
+			float xs = x+game.getShells().get(q).getGX()*length+(game.getShells().get(q).getLX()*length)/game.getShells().get(q).getSize();
+			float ys = y+game.getShells().get(q).getGY()*length+(game.getShells().get(q).getLY()*length)/game.getShells().get(q).getSize();
+			s.drawRect(xs, ys, xs+length/game.getShells().get(q).getSize(), ys+length/game.getShells().get(q).getSize(), p);
 		}
 	}
 	
@@ -124,10 +139,6 @@ public class MainView extends View
 		}
 		return Color.RED;
 	}
-	public int getLength()
-	{
-		return length;
-	}
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) 
@@ -138,11 +149,11 @@ public class MainView extends View
 			y = oldy + ev.getY() - cury;
 			if(x > 0) x = 0;
 			if(y > 0) y = 0;	
-			int w = game.getField().width * k * length;
-			int h = game.getField().height * k * length;
+			int w = game.getField().width * length;
+			int h = game.getField().height * length;
 			if(x < (width - w)) x = width - w;
 			if(y < (height - h)) y = height - h;
-			invalidate();			
+//			invalidate();			
 		}
 		if(ev.getAction() == MotionEvent.ACTION_DOWN)
 		{
@@ -153,7 +164,7 @@ public class MainView extends View
 				replaceTank(); // перемещение танка
 			}
 			
-			invalidate();
+//			invalidate();
 		}
 		if(ev.getAction() == MotionEvent.ACTION_UP)
 		{

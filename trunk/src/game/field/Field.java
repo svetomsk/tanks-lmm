@@ -15,10 +15,15 @@ public class Field
 	{
 		return pole[y][x];
 	}	
-	public void explode(int x, int y) // взрыв
+	public void explode(int x, int y, int power) // взрыв
 	{
+//		if(power>)
 		pole[y][x] = 0;
 		return;
+	}
+	public boolean isExplodable(int x, int y)
+	{
+		return pole[y][x] != 0;
 	}
 	public int getWidth()
 	{

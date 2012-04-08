@@ -18,7 +18,7 @@ public class AbstractTank {
 		g = game;
 		x = xtable;
 		y = ytable;
-		g.getField().explode(xtable, ytable);
+		g.explode(xtable, ytable, 3);
 		if(type.equalsIgnoreCase("Normal"))
 		{
 			width = 2;
