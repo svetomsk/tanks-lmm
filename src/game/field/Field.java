@@ -7,29 +7,32 @@ public class Field
 	public Field(byte[][] array)
 	{
 		pole = array;
-		width = array[0].length;
-		height = array.length;		
+		width = array.length;
+		height = array[0].length;		
 	}
 	
 	public int get(int x, int y) // возвращает содержимое определенной ячейки
 	{
-		return pole[y][x];
+		return pole[x][y];
 	}	
 	public void explode(int x, int y, int power) // взрыв
 	{
-//		if(power>)
-		pole[y][x] = 0;
+		if(pole[x][y] == 1) return;
+		pole[x][y] = 0;
 		return;
 	}
-	public boolean isExplodable(int x, int y)
+	
+	public boolean isExplodable(int x, int y) // проверка на ударяемость. не воздух
 	{
-		return pole[y][x] != 0;
+		return pole[x][y] != 0;
 	}
-	public int getWidth()
+	
+	public int getWidth() // ширина
 	{
 		return width;
 	}
-	public int getHeight()
+	
+	public int getHeight() // высота
 	{
 		return height;
 	}
