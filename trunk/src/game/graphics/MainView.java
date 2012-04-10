@@ -22,22 +22,19 @@ public class MainView extends View
 	float oldx = 0, oldy=0;
 	float width, height;
 	int length = 13;
-	int FPS = 50;
+	int FPS = 50; // frames pur second
 	Game game;
 	
 	Bitmap js; // битмэп для джойстика
-	
-//	Field f; // поле для отрисовки
-	
-//	AbstractTank t; // танк
 	
 	int control, cw = 200, ch = 200; // собственно джойстик, его ширина и высота
 	
 	public MainView(Context c, Field df, int control)
 	{
 		super(c);
-		game = new Game(df, 10, 3, "Normal", this);
+		game = new Game(df, 3, 10, "Boss", this);
 		this.control = control;
+		// запускаем поток, обновляющий View
 		repaintThread();
 	}
 	
@@ -52,7 +49,6 @@ public class MainView extends View
 				while(true)
 				{
 					postInvalidate();
-					Log.d("FFFFFFFFFFFFFFFFFUUUUUUUUUU", "repaint!");
 					try
 					{
 						Thread.sleep(200/FPS);
@@ -64,6 +60,7 @@ public class MainView extends View
 			}
 		}).start();
 	}
+	// собственно прорисовка
 	public void onDraw(Canvas c)
 	{
 		render(c);
@@ -71,11 +68,10 @@ public class MainView extends View
 	
 	public void render(Canvas c)
 	{
-		renderField(c);	
-//		renderTank(game.getMainTank(), c);
-		renderTanks(c);
-		renderShells(c);
-		renderJoystick(c);
+		renderField(c);	// рисуем поле
+		renderTanks(c); // рисуем танки
+		renderShells(c); // рисуем снаряды
+		renderJoystick(c); // рисуем джойстик
 	}	
 	
 	public void renderField(Canvas s) // рисуем поле
@@ -111,7 +107,7 @@ public class MainView extends View
 		{
 			float xs = x+game.getShells().get(q).getGX()*length+(game.getShells().get(q).getLX()*length)/game.getShells().get(q).getSize();
 			float ys = y+game.getShells().get(q).getGY()*length+(game.getShells().get(q).getLY()*length)/game.getShells().get(q).getSize();
-			s.drawRect(xs, ys, xs+length/game.getShells().get(q).getSize(), ys+length/game.getShells().get(q).getSize(), p);
+			s.drawCircle(xs, ys, 2, p);
 		}
 	}
 	
@@ -121,13 +117,6 @@ public class MainView extends View
 		js = BitmapFactory.decodeResource(getResources(), control);
 		s.drawBitmap(js, null, new Rect(0, (int)height - ch, cw, (int)height), null);
 	}
-	
-//	public void renderTank(AbstractTank at, Canvas s) // рисуем танк
-//	{
-//		Paint p = new Paint();
-//		p.setColor(Color.GREEN);
-//		s.drawRect(at.getX()*k*length+x, at.getY()*k*length+y, (at.getX()+at.getWidth())*k*length+x, (at.getY()+at.getLength())*k*length+y, p);
-//	}
 	
 	public int revers(int i, int g, Field f) // преобразование числа в соответствующий цвет
 	{
@@ -157,6 +146,7 @@ public class MainView extends View
 		}
 		if(ev.getAction() == MotionEvent.ACTION_DOWN)
 		{
+			game.getMainTank().shoot((int)((x+ev.getX())/length), (int)((-y+ev.getY())/length));
 			curx = ev.getX();
 			cury = ev.getY();
 			if(curx < cw && cury > height - ch) // если тыкнул на джойстик
@@ -177,21 +167,12 @@ public class MainView extends View
 	private void replaceTank()
 	{
 		int turn = controlAction(curx, cury);
-		if(turn == 1)
+		switch(turn)
 		{
-			game.getMainTank().goUp();
-		}
-		if(turn == 2)
-		{
-			game.getMainTank().goRight();
-		}
-		if(turn == 3)
-		{
-			game.getMainTank().goDown();
-		}
-		if(turn == 4)
-		{
-			game.getMainTank().goLeft();
+		case 1: {game.getMainTank().move(1); break;}
+		case 2: {game.getMainTank().move(0); break;}
+		case 3: {game.getMainTank().move(3); break;}
+		case 4: {game.getMainTank().move(2); break;}
 		}
 	}
 	

@@ -26,6 +26,7 @@ public class AbstractShell {
 		power = 3;
 	}
 	
+	// единичное перемещение заряда
 	public void step()
 	{
 		lx+=stepx;
@@ -35,6 +36,12 @@ public class AbstractShell {
 		if(lx<0) { lx+=loc; gx--; }
 		if(ly>=loc) { ly-=loc; gy++; }
 		if(ly<0) { ly+=loc; gy--; }
+	}
+	
+	// вспомогательные get-методы
+	public AbstractTank getTank()
+	{
+		return at;
 	}
 	public int getPower()
 	{
