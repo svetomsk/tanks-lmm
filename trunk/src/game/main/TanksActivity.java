@@ -34,7 +34,7 @@ public class TanksActivity extends Activity {
     public void newgameButtonEvent(View w)
     {
     	sp = new Separator(getResources());
-		f = new Field(sp.interpritaitonPicture(1));
+		f = new Field(sp.interpritaitonPicture(1), getResources());
         mv = new MainView(this, f, R.drawable.control);        
     	setContentView(mv);
     }

@@ -9,8 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,7 +24,7 @@ public class MainView extends View
 	float oldx = 0, oldy=0;
 	float width, height;
 	int length = 13;
-	int FPS = 50; // frames pur second
+	int FPS = 50; // frames per second
 	Game game;
 	
 	Bitmap js; // битмэп для джойстика
@@ -34,6 +36,7 @@ public class MainView extends View
 		super(c);
 		game = new Game(df, 3, 10, "Boss", this);
 		this.control = control;
+		mf = new Matrix();
 		// запускаем поток, обновляющий View
 		repaintThread();
 	}
@@ -74,18 +77,23 @@ public class MainView extends View
 		renderJoystick(c); // рисуем джойстик
 	}	
 	
-	public void renderField(Canvas s) // рисуем поле
+	private Matrix mf;
+	public void renderField(Canvas s)
 	{
-		Paint p = new Paint();
-		for(int i = 0; i < game.getField().height; i++)
+		int beginx = ( (int) -(x/length) );
+		int beginy = (int) -(y/length);
+		int endx = Math.min( ( (int)((-x+width)/length)+1 ), game.getField().getWidth() );
+		int endy = Math.min( ( (int)((-y+height)/length)+1 ), game.getField().getHeight() );
+		for(int i = beginx; i < endx; i++)
 		{
-			for(int j = 0; j < game.getField().width; j++)
+			for(int j = beginy; j < endy; j++)
 			{
-				p.setColor(revers(i, j, game.getField()));				
-				s.drawRect(j*length + x, i*length + y, (j+1)*length + x, (i+1)*length + y, p);
+				mf.setTranslate(x+i*length, y+j*length);
+				s.drawBitmap(game.getField().getMats().get(game.getField().get(i, j)).getTexture(), null, new Rect((int)x + i * length,(int) y + j * length,(int) x + (i+1)*length,(int) y + (j+1)*length), null);
 			}
-		}
+		}	
 	}
+	
 	public void renderTanks(Canvas s)
 	{
 		Paint p = new Paint();
@@ -105,9 +113,15 @@ public class MainView extends View
 		p.setColor(Color.RED);
 		for(int q=0;q<game.getShells().size();q++)
 		{
-			float xs = x+game.getShells().get(q).getGX()*length+(game.getShells().get(q).getLX()*length)/game.getShells().get(q).getSize();
-			float ys = y+game.getShells().get(q).getGY()*length+(game.getShells().get(q).getLY()*length)/game.getShells().get(q).getSize();
-			s.drawCircle(xs, ys, 2, p);
+			try
+			{
+				float xs = x+game.getShells().get(q).getGX()*length+(game.getShells().get(q).getLX()*length)/game.getShells().get(q).getSize();
+				float ys = y+game.getShells().get(q).getGY()*length+(game.getShells().get(q).getLY()*length)/game.getShells().get(q).getSize();
+				s.drawCircle(xs, ys, 2, p);
+			}catch(ArrayIndexOutOfBoundsException exc)
+			{
+				
+			}
 		}
 	}
 	
@@ -132,36 +146,51 @@ public class MainView extends View
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) 
 	{		
-		if(ev.getAction() == MotionEvent.ACTION_MOVE) // сложные потуги с промоткой
+		if(ev.getPointerCount() <= 2)
 		{	
-			x = oldx + ev.getX() - curx;
-			y = oldy + ev.getY() - cury;
-			if(x > 0) x = 0;
-			if(y > 0) y = 0;	
-			int w = game.getField().width * length;
-			int h = game.getField().height * length;
-			if(x < (width - w)) x = width - w;
-			if(y < (height - h)) y = height - h;
-//			invalidate();			
-		}
-		if(ev.getAction() == MotionEvent.ACTION_DOWN)
-		{
-			game.getMainTank().shoot((int)((x+ev.getX())/length), (int)((-y+ev.getY())/length));
-			curx = ev.getX();
-			cury = ev.getY();
-			if(curx < cw && cury > height - ch) // если тыкнул на джойстик
-			{
-				replaceTank(); // перемещение танка
+			if(ev.getAction() == MotionEvent.ACTION_MOVE) // сложные потуги с промоткой
+			{	
+				onActionMoveEvent(ev);
 			}
-			
-//			invalidate();
-		}
-		if(ev.getAction() == MotionEvent.ACTION_UP)
-		{
-			oldx = x;
-			oldy = y;
+			if(ev.getAction() == MotionEvent.ACTION_DOWN)
+			{
+				onActionDown(ev);
+			}
+			if(ev.getAction() == MotionEvent.ACTION_UP)
+			{
+				onActionUp(ev);
+			}
 		}
 		return true;
+	}
+	
+	private void onActionMoveEvent(MotionEvent ev)
+	{
+		x = oldx + ev.getX() - curx;
+		y = oldy + ev.getY() - cury;
+		if(x > 0) x = 0;
+		if(y > 0) y = 0;	
+		int w = game.getField().width * length;
+		int h = game.getField().height * length;
+		if(x < (width - w)) x = width - w;
+		if(y < (height - h)) y = height - h;
+	}
+	
+	private void onActionDown(MotionEvent ev)
+	{
+		game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));
+		curx = ev.getX();
+		cury = ev.getY();
+		if(curx < cw && cury > height - ch) // если тыкнул на джойстик
+		{
+			replaceTank(); // перемещение танка
+		}
+	}
+	
+	private void onActionUp(MotionEvent me)
+	{
+		oldx = x;
+		oldy = y;
 	}
 	
 	private void replaceTank()

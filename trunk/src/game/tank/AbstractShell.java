@@ -23,7 +23,7 @@ public class AbstractShell {
 		this.at = at;
 		this.loc = loc;
 		
-		power = 3;
+		power = 20;
 	}
 	
 	// единичное перемещение заряда

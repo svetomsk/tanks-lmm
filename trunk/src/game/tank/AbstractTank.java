@@ -35,7 +35,7 @@ public class AbstractTank {
 		{
 			width = 9;
 			v = 1;
-			weps = new AbstractWeapon[17][17];
+			weps = new AbstractWeapon[17][17];			
 			for(int q=1;q<8;q++)
 			{
 				for(int w=1;w<8;w++)
@@ -44,12 +44,8 @@ public class AbstractTank {
 				}
 			}
 		}
-		// зачищаем площадку под появление танка
-		for(int q=0;q<width;q++)
-			for(int w=0;w<width;w++)
-			{
-				g.explode(x+q, y+w, 3);
-			}
+		// зачищаем площадку под появление танка.
+		g.getField().clear(width, x, y);
 	}
 	
 	// метод размещения оружия на ранке
@@ -65,7 +61,7 @@ public class AbstractTank {
 			}
 		}
 		// если можно разместить -> размещаем
-		if(canplace) weps[xp][yp] = new AbstractWeapon(type, this, 256, 160);		
+		if(canplace) weps[xp][yp] = new AbstractWeapon(type, this, 1024, 640);		
 	}
 	
 	// выстрел
@@ -88,6 +84,14 @@ public class AbstractTank {
 			}
 		}
 	}
+	
+	/*
+	 * onTouch(event)
+	 * {
+	 * 		detector.onTouch(event);
+	 * }
+	 * GestureDetector and GestureListner()
+	 * */
 	// движение танка
 	public void move(int value)
 	{
@@ -112,6 +116,7 @@ public class AbstractTank {
 			{
 				a = x - 1; 
 				b = y + q;
+				break;
 			}
 			case 3:
 			{
@@ -135,7 +140,7 @@ public class AbstractTank {
 	private boolean canRide(int x, int y)
 	{
 		boolean canride = true;
-		if(g.getField().get(x, y) != 0) canride = false;
+		if(!g.getField().getMats().get(g.getField().get(x, y)).isDrivable()) canride = false;
 		if(g.getTField().get(x, y) != null) canride = false;
 		return canride;
 	}	
