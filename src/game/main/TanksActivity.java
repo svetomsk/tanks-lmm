@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class TanksActivity extends Activity {
+public class TanksActivity extends Activity{
 	Field f;
 	Separator sp;
 	MainView mv;
@@ -35,7 +35,7 @@ public class TanksActivity extends Activity {
     {
     	sp = new Separator(getResources());
 		f = new Field(sp.interpritaitonPicture(1), getResources());
-        mv = new MainView(this, f, R.drawable.control);        
+        mv = new MainView(this, f);        
     	setContentView(mv);
     }
     
