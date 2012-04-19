@@ -2,8 +2,6 @@ package game.graphics;
 
 import game.field.Field;
 import game.main.Game;
-import game.tank.AbstractShell;
-import game.tank.AbstractTank;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,33 +10,144 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.Log;
+import game.tanks.*;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class MainView extends View
 {
-	float x=0, y=0;
-	float curx=0, cury=0;
-	float oldx = 0, oldy=0;
-	float width, height;
-	int length = 13;
-	int FPS = 50; // frames per second
-	Game game;
+	private float x=0, y=0; // координаты для скроллирования
+	private float curx=0, cury=0; // текущие координаты от MotionEvent'а
+	private float px = 0, py = 0; // кооридинаты для джойстика
+	private float width, height;
+	private int length = 17; // коэфициент масштабирования
+	private int FPS = 50; // frames per second
+	private Game game;
+	private GestureDetector gdScroll; // слушатель жестов
 	
-	Bitmap js; // битмэп для джойстика
+	private Bitmap js; // битмэп для джойстика
 	
-	int control, cw = 200, ch = 200; // собственно джойстик, его ширина и высота
+	private int cw = 200, ch = 200; // собственно джойстик, его ширина и высота
 	
-	public MainView(Context c, Field df, int control)
+	private boolean move = false; // контроллер движения
+	private Matrix mf; // матрица преобразований
+	
+	public MainView(Context c, Field df)
 	{
 		super(c);
-		game = new Game(df, 3, 10, "Boss", this);
-		this.control = control;
+		game = new Game(df, 3, 10, "Normal", this);
+		// создаем джойстик
+		js = BitmapFactory.decodeResource(getResources(), R.drawable.control);
 		mf = new Matrix();
+		addListeners();
 		// запускаем поток, обновляющий View
 		repaintThread();
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent ev) 
+	{		
+		if(MotionEvent.ACTION_UP == ev.getAction())
+		{
+			move = false;
+		}		
+		gdScroll.onTouchEvent(ev);
+		
+		return true;
+	}
+	
+	// создаем простого слушателя нажатий и движений
+	private void addListeners()
+	{
+		OnGestureListener sol = new OnGestureListener()
+		{
+			// одинарный клик
+			@Override
+			public boolean onSingleTapUp(MotionEvent ev) 
+			{		
+				curx = ev.getX();
+				cury = ev.getY();
+				if(!(curx < cw && cury > height - ch)) // если тыкнул на джойстик
+				{
+					game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));
+				}				
+				return true;
+			}
+			
+			// прикосновение
+			@Override
+			public boolean onDown(MotionEvent e) 
+			{
+				curx = e.getX();
+				cury = e.getY();
+				if(curx < cw && cury > height - ch)
+				{
+					move = true;
+					px = curx;
+					py = cury;					
+				}
+				return true;
+			}
+
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2,
+					float velocityX, float velocityY) 
+			{
+				
+				return false;
+			}
+
+			// прокрутка
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2,
+					float distanceX, float distanceY) 
+			{
+				if(!move)
+				{
+					x -= distanceX;
+					y -= distanceY;
+					if(x > 0) x = 0;
+					if(y > 0) y = 0;	
+					int w = game.getField().width * length;
+					int h = game.getField().height * length;
+					if(x < (width - w)) x = width - w;
+					if(y < (height - h)) y = height - h;
+				}
+				else
+				{
+					px -= distanceX;
+					py -= distanceY;
+				}
+				return true;
+			}
+
+			@Override
+			public void onShowPress(MotionEvent ev) 
+			{
+				
+			}			
+
+			@Override
+			public void onLongPress(MotionEvent e) 
+			{
+				
+			}
+		};
+		gdScroll = new GestureDetector(sol);
+	}
+	
+	// рисуем точку для джойстика
+	public void renderPoint(Canvas c)
+	{
+		if(move)
+		{
+			Paint p = new Paint();
+			p.setColor(Color.BLUE);
+			c.drawCircle(px, py, 15, p);
+		}
 	}
 	
 	
@@ -71,13 +180,17 @@ public class MainView extends View
 	
 	public void render(Canvas c)
 	{
+		if(move)
+		{
+			replaceTank();
+		}
 		renderField(c);	// рисуем поле
 		renderTanks(c); // рисуем танки
 		renderShells(c); // рисуем снаряды
 		renderJoystick(c); // рисуем джойстик
+		renderPoint(c); // для джойстика
 	}	
-	
-	private Matrix mf;
+		
 	public void renderField(Canvas s)
 	{
 		int beginx = ( (int) -(x/length) );
@@ -94,6 +207,7 @@ public class MainView extends View
 		}	
 	}
 	
+	// рисуем танки
 	public void renderTanks(Canvas s)
 	{
 		Paint p = new Paint();
@@ -107,6 +221,8 @@ public class MainView extends View
 			}
 		}
 	}
+	
+	// рисуем снаряды
 	public void renderShells(Canvas s)
 	{
 		Paint p = new Paint();
@@ -125,10 +241,9 @@ public class MainView extends View
 		}
 	}
 	
-	
+	// рисуем джойстик
 	public void renderJoystick(Canvas s) // добавляем джойстик
 	{		
-		js = BitmapFactory.decodeResource(getResources(), control);
 		s.drawBitmap(js, null, new Rect(0, (int)height - ch, cw, (int)height), null);
 	}
 	
@@ -141,30 +256,10 @@ public class MainView extends View
 			case 2 : return Color.rgb(151, 76, 24);
 		}
 		return Color.RED;
-	}
+	}	
 	
-	@Override
-	public boolean onTouchEvent(MotionEvent ev) 
-	{		
-		if(ev.getPointerCount() <= 2)
-		{	
-			if(ev.getAction() == MotionEvent.ACTION_MOVE) // сложные потуги с промоткой
-			{	
-				onActionMoveEvent(ev);
-			}
-			if(ev.getAction() == MotionEvent.ACTION_DOWN)
-			{
-				onActionDown(ev);
-			}
-			if(ev.getAction() == MotionEvent.ACTION_UP)
-			{
-				onActionUp(ev);
-			}
-		}
-		return true;
-	}
-	
-	private void onActionMoveEvent(MotionEvent ev)
+	// остатки первого управления. могут быть полезными. НЕ УДАЛЯТЬ!
+/*	private void onActionMoveEvent(MotionEvent ev)
 	{
 		x = oldx + ev.getX() - curx;
 		y = oldy + ev.getY() - cury;
@@ -191,8 +286,9 @@ public class MainView extends View
 	{
 		oldx = x;
 		oldy = y;
-	}
+	}*/
 	
+	// движение танка
 	private void replaceTank()
 	{
 		int turn = controlAction(curx, cury);
@@ -209,8 +305,8 @@ public class MainView extends View
 	{
 		int x1 = 0; int x2 = cw;
 		int y1 = (int)height - ch; int y2 = (int)height;
-		int mainDiagonal = (int)((curx - x1) * (y2 - y1) - (cury - y1) * (x2 - x1));
-		int pobDiagonal = (int)((curx - x1) * (y1 - y2) - (cury - y2) * (x2 - x1));
+		int mainDiagonal = (int)((px - x1) * (y2 - y1) - (py - y1) * (x2 - x1));
+		int pobDiagonal = (int)((px - x1) * (y1 - y2) - (py - y2) * (x2 - x1));
 		if(mainDiagonal > 0 && pobDiagonal > 0)
 			return 1;
 		if(mainDiagonal > 0 && pobDiagonal < 0)
