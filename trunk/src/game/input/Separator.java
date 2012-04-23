@@ -26,7 +26,7 @@ public class Separator
 	{
 		Bitmap pic = null;
 		if(name == 1) { pic = BitmapFactory.decodeResource(r, R.drawable.map1); }
-	//	if(name == 2) { pic = BitmapFactory.decodeResource(r, R.drawable.map2); }
+		if(name == 2) { pic = BitmapFactory.decodeResource(r, R.drawable.map2); }
 		
 		Y = pic.getHeight();
 		X = pic.getWidth();
@@ -37,10 +37,12 @@ public class Separator
 			for(int w=0;w<Y;w++)
 			{
 				mas[q+1][w+1] = 0;
+				Log.i("0000000", ""+pic.getPixel(q, w));
 				switch(pic.getPixel(q, w))
 				{
 				case -8421505: {mas[q+1][w+1] = 1; break;}
 				case -4621737: {mas[q+1][w+1] = 2; break;}
+				case -6694422: {mas[q+1][w+1] = 4; break;}
 				}
 			}
 		}
