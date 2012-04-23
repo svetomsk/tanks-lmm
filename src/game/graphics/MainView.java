@@ -2,6 +2,9 @@ package game.graphics;
 
 import game.field.Field;
 import game.main.Game;
+import game.tank.Lazer;
+import game.tank.Shell;
+import game.tanks.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,7 +14,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
-import game.tanks.*;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -24,9 +26,10 @@ public class MainView extends View
 	private float px = 0, py = 0; // кооридинаты для джойстика
 	private float width, height;
 	private int length = 17; // коэфициент масштабирования
-	private int FPS = 50; // frames per second
+	private int FPS = 300; // frames per second
 	private Game game;
 	private GestureDetector gdScroll; // слушатель жестов
+	private int pointerCount;
 	
 	private Bitmap js; // битмэп для джойстика
 	
@@ -50,11 +53,15 @@ public class MainView extends View
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) 
 	{		
-		if(MotionEvent.ACTION_UP == ev.getAction())
+		pointerCount = ev.getPointerCount();
+		if(pointerCount == 1)
 		{
-			move = false;
-		}		
-		gdScroll.onTouchEvent(ev);
+			if(ev.getAction() == MotionEvent.ACTION_UP && move)
+			{
+				move = false;
+			}
+			gdScroll.onTouchEvent(ev);
+		}
 		
 		return true;
 	}
@@ -105,10 +112,11 @@ public class MainView extends View
 			public boolean onScroll(MotionEvent e1, MotionEvent e2,
 					float distanceX, float distanceY) 
 			{
-				if(!move)
+				if(!move && pointerCount == 1)
 				{
 					x -= distanceX;
 					y -= distanceY;
+					game.getMainTank().shoot((int)((-x+e2.getX())/length), (int)((-y+e2.getY())/length));
 					if(x > 0) x = 0;
 					if(y > 0) y = 0;	
 					int w = game.getField().width * length;
@@ -119,7 +127,7 @@ public class MainView extends View
 				else
 				{
 					px -= distanceX;
-					py -= distanceY;
+					py -= distanceY;					
 				}
 				return true;
 			}
@@ -133,7 +141,7 @@ public class MainView extends View
 			@Override
 			public void onLongPress(MotionEvent e) 
 			{
-				
+//				game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));				
 			}
 		};
 		gdScroll = new GestureDetector(sol);
@@ -187,6 +195,7 @@ public class MainView extends View
 		renderField(c);	// рисуем поле
 		renderTanks(c); // рисуем танки
 		renderShells(c); // рисуем снаряды
+		renderLazer(c);
 		renderJoystick(c); // рисуем джойстик
 		renderPoint(c); // для джойстика
 	}	
@@ -211,7 +220,7 @@ public class MainView extends View
 	public void renderTanks(Canvas s)
 	{
 		Paint p = new Paint();
-		p.setColor(Color.GREEN);
+		p.setColor(Color.GRAY);
 		
 		for(int q=0;q<game.getField().getHeight();q++)
 		{
@@ -231,10 +240,30 @@ public class MainView extends View
 		{
 			try
 			{
-				float xs = x+game.getShells().get(q).getGX()*length+(game.getShells().get(q).getLX()*length)/game.getShells().get(q).getSize();
-				float ys = y+game.getShells().get(q).getGY()*length+(game.getShells().get(q).getLY()*length)/game.getShells().get(q).getSize();
+				Shell sh = game.getShells().get(q);
+				float xs = x+sh.getGX()*length+(sh.getLX()*length)/sh.getSize();
+				float ys = y+sh.getGY()*length+(sh.getLY()*length)/sh.getSize();
 				s.drawCircle(xs, ys, 2, p);
-			}catch(ArrayIndexOutOfBoundsException exc)
+			}catch(Exception exc)
+			{
+				
+			}
+		}
+	}
+	
+	public void renderLazer(Canvas s)
+	{
+		Paint p = new Paint();
+		p.setColor(Color.RED);
+		for(int q=0;q<game.getLazer().size();q++)
+		{
+			try
+			{
+				Lazer l = game.getLazer().get(q);
+				float xs = x+l.getGX()*length+(l.getLX()*length)/l.getSize();
+				float ys = y+l.getGY()*length+(l.getLY()*length)/l.getSize();
+				s.drawCircle(xs, ys, 2, p);
+			}catch(Exception exc)
 			{
 				
 			}

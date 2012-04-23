@@ -44,6 +44,10 @@ public class Field
 	{
 		return mats.get(pole[x][y]).isExplodable();
 	}
+	public boolean isPermeableToLight(int x, int y) // проверка на ударяемость. не воздух
+	{
+		return mats.get(pole[x][y]).isPermeableToLight();
+	}
 
 	public Materials getMats()
 	{

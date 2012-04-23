@@ -1,16 +1,16 @@
 package game.field;
 
-import game.tank.AbstractTank;
+import game.tank.Tank;
 
 public class TanksField {
-	private AbstractTank[][] arr; // массив танков
+	private Tank[][] arr; // массив танков
 	
 	public TanksField(int width, int height)
 	{
-		arr = new AbstractTank[width][height];
+		arr = new Tank[width][height];
 	}
 	
-	public void spawnTank(AbstractTank at) // появление танка
+	public void spawnTank(Tank at) // появление танка
 	{
 		int width = at.getWidth(); // ширина танка
 		// координаты верхнего левого угла
@@ -26,7 +26,7 @@ public class TanksField {
 		}
 	}
 	
-	public void explode(AbstractTank at) // уничтожение танка
+	public void explode(Tank at) // уничтожение танка
 	{
 		if(at == null) return;
 		int x = at.getX();
@@ -42,7 +42,7 @@ public class TanksField {
 		}
 	}
 	
-	public void go(AbstractTank at, int vector) // обрабатываем движение
+	public void go(Tank at, int vector) // обрабатываем движение
 	{
 		// координаты верхнего левого угла 
 		int x = at.getX();
@@ -83,7 +83,7 @@ public class TanksField {
 	
 	
 	
-	public AbstractTank get(int x, int y) // возвращаем ссылку на танк в данной точке
+	public Tank get(int x, int y) // возвращаем ссылку на танк в данной точке
 	{
 		return arr[x][y];
 	}
