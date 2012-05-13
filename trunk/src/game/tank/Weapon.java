@@ -6,6 +6,7 @@ public class Weapon {
 	private int loc;
 	private int stepLength;
 	private long lastShoot, delay;
+	private int angle;
 	
 	public Weapon(String type, Tank t, int loc, int stepLength)
 	{
@@ -13,9 +14,9 @@ public class Weapon {
 		this.type = type;
 		this.loc = loc;
 		this.stepLength = stepLength;
+		this.angle = -90;
 
-		if(type.equalsIgnoreCase("Normal")) {delay = 1000;}
-		if(type.equalsIgnoreCase("Lazer")) {delay = 0;}
+		if(type.equalsIgnoreCase("Normal")) {delay = 256;}
 		
 		lastShoot = -1;
 	}
@@ -31,7 +32,15 @@ public class Weapon {
 			return true;
 		return false;
 	}
+	public void setAngle(int a)
+	{
+		angle = a;		
+	}
 	
+	public int getAngle()
+	{
+		return angle;
+	}
 	public int getLoc()
 	{
 		return loc;

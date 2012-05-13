@@ -4,5 +4,9 @@
 	<string name="about">About</string>
 	<string name="exit">Exit</string>
     <string name="app_name">Tanks</string>
+    <string-array name="menu_items">
+        <item> Resume </item>
+        <item> Main menu</item>
+    </string-array>
 
 </resources>

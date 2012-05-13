@@ -37,7 +37,6 @@ public class Separator
 			for(int w=0;w<Y;w++)
 			{
 				mas[q+1][w+1] = 0;
-				Log.i("0000000", ""+pic.getPixel(q, w));
 				switch(pic.getPixel(q, w))
 				{
 				case -8421505: {mas[q+1][w+1] = 1; break;}

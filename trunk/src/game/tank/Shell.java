@@ -23,7 +23,7 @@ public class Shell {
 		this.at = at;
 		this.loc = loc;
 		
-		power = 20;
+		power = 4;
 	}
 	
 	// единичное перемещение заряда
