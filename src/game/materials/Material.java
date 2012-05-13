@@ -10,6 +10,7 @@ public class Material {
 	private boolean isExplodable;
 	private boolean isPermeableToLight;
 	private boolean isDrivable;
+	private byte life;
 	private Bitmap texture;
 		
 	public Material(int hardness, boolean isExplodable, boolean isPermeableToLight, boolean isDrivable, Bitmap texture)
@@ -26,6 +27,7 @@ public class Material {
 	public boolean isPermeableToLight() { return isPermeableToLight; }
 	public boolean isDrivable () { return isDrivable; }
 	public Bitmap getTexture() { return texture; }
+	public int getLife() { return life; }
 	
 	//юзай extend
 }

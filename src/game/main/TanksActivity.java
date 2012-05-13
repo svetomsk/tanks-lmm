@@ -4,13 +4,11 @@ import game.field.Field;
 import game.graphics.MainView;
 import game.input.Separator;
 import game.tanks.R;
-
-import java.io.IOException;
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -57,8 +55,28 @@ public class TanksActivity extends Activity{
     {
     	if(keykode == KeyEvent.KEYCODE_BACK)
     	{
-    		setContentView(R.layout.main);
+    		showDialogWindow();
     	}
     	return true;
+    }
+    
+    public void showDialogWindow()
+    {
+    	new AlertDialog.Builder(this).setTitle("Pause").setItems(R.array.menu_items,
+    	new DialogInterface.OnClickListener() 
+    	{			
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) 
+			{
+				if(arg1 == 0)
+				{
+					arg0.cancel();
+				}
+				else
+				{
+					setContentView(R.layout.main);
+				}
+			}
+    	}).show();
     }
 }

@@ -26,9 +26,11 @@ public class TanksField {
 		}
 	}
 	
-	public void explode(Tank at) // уничтожение танка
+	public void explode(Tank at, int power) // уничтожение танка
 	{
 		if(at == null) return;
+		at.damage(power);
+		if(at.getLife()>0)return;
 		int x = at.getX();
 		int y = at.getY();
 		int width = at.getWidth();

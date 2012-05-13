@@ -7,6 +7,7 @@ import game.materials.Materials;
 public class Field 
 {
 	private byte [][] pole; // собственно поле
+	private int [][] hardMap;
 	public int width, height; // ширина и высота
 	private Materials mats;
 	
@@ -14,9 +15,17 @@ public class Field
 	{
 		pole = array;
 		width = array.length;
-		height = array[0].length;	
+		height = array[0].length;
+		hardMap = new int[width][height];
 		mats = new Materials();
 		mats.init(r);	
+		for(int q=0;q<width;q++)
+		{
+			for(int w=0;w<height;w++)
+			{
+				hardMap[q][w] = mats.get(pole[q][w]).getHardness(); 
+			}
+		}
 	}
 	
 	public int get(int x, int y) // возвращает содержимое определенной ячейки
@@ -25,7 +34,10 @@ public class Field
 	}	
 	public void explode(int x, int y, int power) // взрыв
 	{
-		if(mats.get(pole[x][y]).getHardness() <= power) pole[x][y] = 0;
+		hardMap[x][y]-=power;
+		if(hardMap[x][y]>0)return;
+		if(pole[x][y] == 1){ hardMap[x][y]=0; return;}
+		pole[x][y] = 0;
 		return;
 	}
 	

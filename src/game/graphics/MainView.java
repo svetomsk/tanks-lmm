@@ -2,8 +2,9 @@ package game.graphics;
 
 import game.field.Field;
 import game.main.Game;
-import game.tank.Lazer;
 import game.tank.Shell;
+import game.tank.Tank;
+import game.tank.Weapon;
 import game.tanks.R;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -28,6 +29,8 @@ public class MainView extends View
 	private int length = 17; // коэфициент масштабирования
 	private int FPS = 300; // frames per second
 	private Game game;
+	private PicLibrary piclib;
+	private Matrix transl, scale, rotation, fieldMatrix;
 	private GestureDetector gdScroll; // слушатель жестов
 	private int pointerCount;
 	
@@ -36,15 +39,18 @@ public class MainView extends View
 	private int cw = 200, ch = 200; // собственно джойстик, его ширина и высота
 	
 	private boolean move = false; // контроллер движения
-	private Matrix mf; // матрица преобразований
 	
 	public MainView(Context c, Field df)
 	{
 		super(c);
-		game = new Game(df, 3, 10, "Normal", this);
+		piclib = new PicLibrary(getResources());		
+		game = new Game(df, 3, 10, "Boss", this);
 		// создаем джойстик
 		js = BitmapFactory.decodeResource(getResources(), R.drawable.control);
-		mf = new Matrix();
+		fieldMatrix = new Matrix();
+		transl = new Matrix();
+		rotation = new Matrix();
+		scale = new Matrix();
 		addListeners();
 		// запускаем поток, обновляющий View
 		repaintThread();
@@ -195,9 +201,8 @@ public class MainView extends View
 		renderField(c);	// рисуем поле
 		renderTanks(c); // рисуем танки
 		renderShells(c); // рисуем снаряды
-		renderLazer(c);
 		renderJoystick(c); // рисуем джойстик
-		renderPoint(c); // для джойстика
+		renderPoint(c); // для джойстика		
 	}	
 		
 	public void renderField(Canvas s)
@@ -210,7 +215,7 @@ public class MainView extends View
 		{
 			for(int j = beginy; j < endy; j++)
 			{
-				mf.setTranslate(x+i*length, y+j*length);
+				fieldMatrix.setTranslate(x+i*length, y+j*length);
 				s.drawBitmap(game.getField().getMats().get(game.getField().get(i, j)).getTexture(), null, new Rect((int)x + i * length,(int) y + j * length,(int) x + (i+1)*length,(int) y + (j+1)*length), null);
 			}
 		}	
@@ -219,18 +224,47 @@ public class MainView extends View
 	// рисуем танки
 	public void renderTanks(Canvas s)
 	{
-		Paint p = new Paint();
-		p.setColor(Color.GRAY);
-		
 		for(int q=0;q<game.getField().getHeight();q++)
 		{
 			for(int w=0;w<game.getField().getWidth();w++)
 			{
-				if(game.getTField().get(w, q) != null) s.drawRect(w*length + x, q*length + y, (w+1)*length + x, (q+1)*length + y, p);
+				if(game.getTField().get(w, q) != null && game.getTField().get(w, q).getX() == w && game.getTField().get(w, q).getY() == q)
+				{
+					renderTank(s, q, w);
+				}
 			}
 		}
 	}
 	
+	public void renderTank(Canvas s, int q, int w)
+	{
+		Bitmap bm = piclib.getBitmapTank(game.getTField().get(w, q).getType());
+		transl.setTranslate(w*length+x, q*length+y);
+		rotation.setRotate((float)((-game.getTField().get(w, q).getDir()+1)*90), bm.getHeight()/2, bm.getWidth()/2);
+		scale.setScale((float)1.0*game.getTField().get(w, q).getWidth()*length/bm.getWidth(), (float)1.0*game.getTField().get(w, q).getWidth()*length/bm.getHeight());
+		transl.setConcat(transl, scale);
+		transl.setConcat(transl, rotation);
+		s.drawBitmap(bm, transl, null);
+		Tank t = game.getTField().get(w, q);
+		for(int i=0;i<t.getWeps().length;i++)
+		{
+			for(int j=0;j<t.getWeps()[0].length;j++)
+			{
+				if(t.getWeps()[i][j] != null)
+				{
+					Weapon curW = t.getWeps()[i][j];
+					bm = piclib.getBitmapWeapon(curW.getType());
+					transl.setTranslate((t.getX()+i/2)*length-(int)((1-(i%2))*length/2.0)+x, (int)(t.getY()+j/2)*length-(int)((1-(j%2))*length/2.0)+y);
+					rotation.setRotate((float)(curW.getAngle()), bm.getWidth()/2, bm.getHeight()/2);
+					scale.setScale((float)2.0*length/bm.getWidth(), (float)2.0*length/bm.getHeight());
+					transl.setConcat(transl, scale);
+					transl.setConcat(transl, rotation);
+					s.drawBitmap(bm, transl, null);
+				}
+			}
+		}
+	
+	}
 	// рисуем снаряды
 	public void renderShells(Canvas s)
 	{
@@ -243,25 +277,6 @@ public class MainView extends View
 				Shell sh = game.getShells().get(q);
 				float xs = x+sh.getGX()*length+(sh.getLX()*length)/sh.getSize();
 				float ys = y+sh.getGY()*length+(sh.getLY()*length)/sh.getSize();
-				s.drawCircle(xs, ys, 2, p);
-			}catch(Exception exc)
-			{
-				
-			}
-		}
-	}
-	
-	public void renderLazer(Canvas s)
-	{
-		Paint p = new Paint();
-		p.setColor(Color.RED);
-		for(int q=0;q<game.getLazer().size();q++)
-		{
-			try
-			{
-				Lazer l = game.getLazer().get(q);
-				float xs = x+l.getGX()*length+(l.getLX()*length)/l.getSize();
-				float ys = y+l.getGY()*length+(l.getLY()*length)/l.getSize();
 				s.drawCircle(xs, ys, 2, p);
 			}catch(Exception exc)
 			{
@@ -286,36 +301,6 @@ public class MainView extends View
 		}
 		return Color.RED;
 	}	
-	
-	// остатки первого управления. могут быть полезными. НЕ УДАЛЯТЬ!
-/*	private void onActionMoveEvent(MotionEvent ev)
-	{
-		x = oldx + ev.getX() - curx;
-		y = oldy + ev.getY() - cury;
-		if(x > 0) x = 0;
-		if(y > 0) y = 0;	
-		int w = game.getField().width * length;
-		int h = game.getField().height * length;
-		if(x < (width - w)) x = width - w;
-		if(y < (height - h)) y = height - h;
-	}
-	
-	private void onActionDown(MotionEvent ev)
-	{
-		game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));
-		curx = ev.getX();
-		cury = ev.getY();
-		if(curx < cw && cury > height - ch) // если тыкнул на джойстик
-		{
-			replaceTank(); // перемещение танка
-		}
-	}
-	
-	private void onActionUp(MotionEvent me)
-	{
-		oldx = x;
-		oldy = y;
-	}*/
 	
 	// движение танка
 	private void replaceTank()
@@ -352,5 +337,6 @@ public class MainView extends View
 		width = w;
 		height = h;
 	}
+	
 	
 }

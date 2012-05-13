@@ -3,7 +3,6 @@ package game.main;
 import game.field.Field;
 import game.field.TanksField;
 import game.graphics.MainView;
-import game.tank.Lazer;
 import game.tank.Shell;
 import game.tank.Tank;
 
@@ -19,7 +18,6 @@ public class Game {
 	private Field field;
 	private TanksField tfield;
 	private ArrayList<Shell> shells;
-	private ArrayList<Lazer> lazers;
 	
 	public Game(Field f, int xm, int ym, String typem, MainView mv)
 	{
@@ -29,8 +27,7 @@ public class Game {
 		tfield.spawnTank(mainTank);
 		tfield.spawnTank(new Tank("Big", 10, 3, this));
 		view = mv;
-		shells = new ArrayList<Shell>() {};
-		lazers = new ArrayList<Lazer>() {};
+		shells = new ArrayList<Shell>();
 		shellThread(); // запускаем поток, который отрисовывает снаряды
 	}
 	
@@ -52,16 +49,6 @@ public class Game {
 							shells.remove(i);
 						}
 					}
-					for(int i = 0; i < lazers.size(); i++)
-					{
-						Lazer l = lazers.get(i);
-						l.step();
-						if(isEnd(l))
-						{
-							explode(l.getGX(), l.getGY(), l.getPower());
-							lazers.remove(i);
-						}
-					}
 					try {
 						Thread.sleep(50);
 					} catch (InterruptedException e) {
@@ -79,17 +66,11 @@ public class Game {
 		if(tfield.get(as.getGX(), as.getGY()) != null  && tfield.get(as.getGX(), as.getGY()) != as.getTank()) return true;
 		return false;
 	}
-	private boolean isEnd(Lazer l)
-	{
-		if(!field.isPermeableToLight(l.getGX(), l.getGY())) return true;
-		if(tfield.get(l.getGX(), l.getGY()) != null  && tfield.get(l.getGX(), l.getGY()) != l.getTank()) return true;
-		return false;
-	}
 	// взрываем
 	public void explode(int x, int y, int power)
 	{
 		field.explode(x, y, power);
-		tfield.explode(tfield.get(x, y));
+		tfield.explode(tfield.get(x, y), power);
 	}
 	
 	// выстрел
@@ -97,19 +78,11 @@ public class Game {
 	{
 		shells.add(shell);
 	}
-	public void shootLazer(Lazer lazer)
-	{
-		lazers.add(lazer);
-	}
 
 	// вспомогательные методы
 	public ArrayList<Shell> getShells()
 	{
 		return shells;
-	}
-	public ArrayList<Lazer> getLazer()
-	{
-		return lazers;
 	}
 	public Field getField()
 	{
