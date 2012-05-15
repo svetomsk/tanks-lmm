@@ -15,18 +15,20 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class TanksActivity extends Activity{
-	Field f;
-	Separator sp;
-	MainView mv;
+	private Field f;
+	private Separator sp;
+	private MainView mv;
+	private boolean isMain;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);             
+		super.onCreate(savedInstanceState);             
         // убираем верхушку 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.main);  
+		isMain = false;
     }
     // слушатель кнопки Start
     public void newgameButtonEvent(View w)
@@ -35,6 +37,7 @@ public class TanksActivity extends Activity{
 		f = new Field(sp.interpritaitonPicture(1), getResources());
         mv = new MainView(this, f);        
     	setContentView(mv);
+		isMain = true;
     }
     
     // слушатель кнопки About
@@ -55,7 +58,10 @@ public class TanksActivity extends Activity{
     {
     	if(keykode == KeyEvent.KEYCODE_BACK)
     	{
-    		showDialogWindow();
+			if(isMain)
+			{
+    		    showDialogWindow();
+			}
     	}
     	return true;
     }
@@ -66,15 +72,17 @@ public class TanksActivity extends Activity{
     	new DialogInterface.OnClickListener() 
     	{			
 			@Override
-			public void onClick(DialogInterface arg0, int arg1) 
+			public void onClick(DialogInterface dialog, int i) 
 			{
-				if(arg1 == 0)
+				if(i == 0)
 				{
-					arg0.cancel();
+					dialog.cancel();
+					isMain = true;
 				}
 				else
 				{
 					setContentView(R.layout.main);
+					isMain = false;
 				}
 			}
     	}).show();
