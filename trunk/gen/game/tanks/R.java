@@ -23,11 +23,10 @@ public final class R {
         public static final int floor_grass=0x7f020005;
         public static final int ic_launcher=0x7f020006;
         public static final int map1=0x7f020007;
-        public static final int map2=0x7f020008;
-        public static final int tank_big=0x7f020009;
-        public static final int tank_boss=0x7f02000a;
-        public static final int tank_normal=0x7f02000b;
-        public static final int weapon_normal=0x7f02000c;
+        public static final int tank_big=0x7f020008;
+        public static final int tank_boss=0x7f020009;
+        public static final int tank_normal=0x7f02000a;
+        public static final int weapon_normal=0x7f02000b;
     }
     public static final class id {
         public static final int about=0x7f060001;
@@ -35,8 +34,7 @@ public final class R {
         public static final int newgame=0x7f060000;
     }
     public static final class layout {
-        public static final int game=0x7f030000;
-        public static final int main=0x7f030001;
+        public static final int main=0x7f030000;
     }
     public static final class string {
         public static final int about=0x7f050001;

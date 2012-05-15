@@ -1,14 +1,8 @@
 package game.input;
 import game.tanks.R;
-
-import java.io.*;
-
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
-import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
 public class Separator 
 {
 	private byte [][] mas;
@@ -26,7 +20,7 @@ public class Separator
 	{
 		Bitmap pic = null;
 		if(name == 1) { pic = BitmapFactory.decodeResource(r, R.drawable.map1); }
-		if(name == 2) { pic = BitmapFactory.decodeResource(r, R.drawable.map2); }
+		//if(name == 2) { pic = BitmapFactory.decodeResource(r, R.drawable.map2); }
 		
 		Y = pic.getHeight();
 		X = pic.getWidth();

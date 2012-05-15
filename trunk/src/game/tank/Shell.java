@@ -1,7 +1,5 @@
 package game.tank;
 
-import game.tank.*;
-
 public class Shell {
 	private int stepx, stepy;
 	private int gx, gy;

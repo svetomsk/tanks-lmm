@@ -4,6 +4,7 @@ import game.field.Field;
 import game.graphics.MainView;
 import game.input.Separator;
 import game.tanks.R;
+import game.threads.ThreadManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -19,6 +20,8 @@ public class TanksActivity extends Activity{
 	private Separator sp;
 	private MainView mv;
 	private boolean isMain;
+	// говорящее название
+	private ThreadManager tmanager;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -28,16 +31,21 @@ public class TanksActivity extends Activity{
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.main);  
+        
+        sp = new Separator(getResources());
+		f = new Field(sp.interpritaitonPicture(1), getResources());
+        mv = new MainView(this, f);
+        
+        tmanager = new ThreadManager(mv, mv.getGame());
 		isMain = false;
     }
     // слушатель кнопки Start
     public void newgameButtonEvent(View w)
     {
-    	sp = new Separator(getResources());
-		f = new Field(sp.interpritaitonPicture(1), getResources());
-        mv = new MainView(this, f);        
     	setContentView(mv);
 		isMain = true;
+		tmanager.reborn();
+		mv.createNewGame();
     }
     
     // слушатель кнопки About
@@ -46,9 +54,10 @@ public class TanksActivity extends Activity{
     	//showing information about game
     }
     // слушатель кнопки Exit
-    public void exitButtonEvent(View w)
+    public void exitButtonEvent(View w) throws InterruptedException
     {
     	// may be saving or simply exit
+    	tmanager.destroy();
     	System.exit(0);
     }
     
@@ -82,6 +91,13 @@ public class TanksActivity extends Activity{
 				else
 				{
 					setContentView(R.layout.main);
+				 	try 
+					{
+						tmanager.destroy();
+					} catch (InterruptedException e) 
+					{
+						e.printStackTrace();
+					}
 					isMain = false;
 				}
 			}

@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -33,6 +32,7 @@ public class MainView extends View
 	private Matrix transl, scale, rotation, fieldMatrix;
 	private GestureDetector gdScroll; // слушатель жестов
 	private int pointerCount;
+	private Field df;
 	
 	private Bitmap js; // битмэп для джойстика
 	
@@ -43,8 +43,9 @@ public class MainView extends View
 	public MainView(Context c, Field df)
 	{
 		super(c);
-		piclib = new PicLibrary(getResources());		
-		game = new Game(df, 3, 10, "Boss", this);
+		this.df = df;
+		piclib = new PicLibrary(getResources());	            
+        game = new Game(df, 3, 10, "Normal", this);
 		// создаем джойстик
 		js = BitmapFactory.decodeResource(getResources(), R.drawable.control);
 		fieldMatrix = new Matrix();
@@ -52,8 +53,17 @@ public class MainView extends View
 		rotation = new Matrix();
 		scale = new Matrix();
 		addListeners();
-		// запускаем поток, обновляющий View
-		repaintThread();
+	}	
+	
+	public void createNewGame()
+	{
+		game = new Game(df, 3, 10, "Normal", this);
+	}
+	
+	// возвращаем Game для потоков
+	public Game getGame()
+	{
+		return game;
 	}
 	
 	@Override
@@ -164,28 +174,11 @@ public class MainView extends View
 		}
 	}
 	
-	
-	public void repaintThread()
-	{		
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				while(true)
-				{
-					postInvalidate();
-					try
-					{
-						Thread.sleep(200/FPS);
-					}catch(InterruptedException exs)
-					{
-						Log.d("EXCEPTION", "LINE 55 MV");
-					}
-				}
-			}
-		}).start();
+	public int getFPS()
+	{
+		return FPS;
 	}
+	
 	// собственно прорисовка
 	public void onDraw(Canvas c)
 	{
@@ -199,10 +192,10 @@ public class MainView extends View
 			replaceTank();
 		}
 		renderField(c);	// рисуем поле
-		renderTanks(c); // рисуем танки
 		renderShells(c); // рисуем снаряды
 		renderJoystick(c); // рисуем джойстик
-		renderPoint(c); // для джойстика		
+		renderPoint(c); // для джойстика	
+		renderTanks(c); // рисуем танки
 	}	
 		
 	public void renderField(Canvas s)

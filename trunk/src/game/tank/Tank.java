@@ -1,14 +1,7 @@
 package game.tank;
 
 import game.main.Game;
-import game.tanks.R;
-
 import java.util.Calendar;
-
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 
 public class Tank {
 
