@@ -5,15 +5,10 @@ import game.field.TanksField;
 import game.graphics.MainView;
 import game.tank.Shell;
 import game.tank.Tank;
-
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
-import android.util.Log;
 
 public class Game {
 	
-	private MainView view;
 	private Tank mainTank;
 	private Field field;
 	private TanksField tfield;
@@ -26,41 +21,26 @@ public class Game {
 		mainTank = new Tank(typem, xm, ym, this);
 		tfield.spawnTank(mainTank);
 		tfield.spawnTank(new Tank("Big", 10, 3, this));
-		view = mv;
 		shells = new ArrayList<Shell>();
-		shellThread(); // запускаем поток, который отрисовывает снаряды
 	}
-	
-	public void shellThread()
+
+	public int getShellCount()
 	{
-		new Thread(new Runnable()
-		{
-			public void run()
-			{
-				while(true)
-				{
-					for(int i = 0; i < shells.size(); i++)
-					{
-						Shell as = shells.get(i);
-						as.step();
-						if(isExplode(as))
-						{
-							explode(as.getGX(), as.getGY(), as.getPower());
-							shells.remove(i);
-						}
-					}
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-						Log.d("EXCEPTION", "LINE 67 G");
-					}
-				}
-			}
-		}).start();
+		return shells.size();
 	}
 	
+	public Shell getShell(int index)
+	{
+		return shells.get(index);
+	}
+	
+	public void removeShell(int index)
+	{
+		shells.remove(index);
+	}
+
 	// проверяем надо ли взрывать
-	private boolean isExplode(Shell as)
+	public boolean isExplode(Shell as)
 	{
 		if(field.isExplodable(as.getGX(), as.getGY())) return true;
 		if(tfield.get(as.getGX(), as.getGY()) != null  && tfield.get(as.getGX(), as.getGY()) != as.getTank()) return true;

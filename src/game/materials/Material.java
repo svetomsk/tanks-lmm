@@ -1,9 +1,6 @@
 package game.materials;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Picture;
-import android.graphics.drawable.Drawable;
 
 public class Material {
 	private int hardness;

@@ -1,7 +1,6 @@
 package game.field;
 
 import android.content.res.Resources;
-import android.util.Log;
 import game.materials.Materials;
 
 public class Field 
