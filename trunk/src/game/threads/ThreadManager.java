@@ -14,7 +14,7 @@ public class ThreadManager
 	Game g;
 	
 	public ThreadManager(MainView mv, Game game)
-	{
+	{		
 		m = mv;
 		g = game;
 	}

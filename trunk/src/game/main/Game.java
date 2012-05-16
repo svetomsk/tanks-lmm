@@ -5,6 +5,7 @@ import game.field.TanksField;
 import game.graphics.MainView;
 import game.tank.Shell;
 import game.tank.Tank;
+
 import java.util.ArrayList;
 
 public class Game {
@@ -27,6 +28,11 @@ public class Game {
 	public int getShellCount()
 	{
 		return shells.size();
+	}
+	
+	public void shellStep(int index)
+	{
+		shells.get(index).step();
 	}
 	
 	public Shell getShell(int index)

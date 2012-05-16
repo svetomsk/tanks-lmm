@@ -1,7 +1,6 @@
 package game.threads;
 
 import game.main.Game;
-import game.tank.Shell;
 import android.util.Log;
 
 public class ShellThread extends Thread
@@ -32,16 +31,19 @@ public class ShellThread extends Thread
 	public void run()
 	{
 		while(state)
-		{			
-			for(int i = 0; i < game.getShellCount(); i++)
+		{		
+			int n = game.getShells().size();	
+			for(int i = 0; i < n; i++)
 			{
-				Shell as = game.getShell(i);
-				as.step();
-				if(game.isExplode(as))
+				try
 				{
-					game.explode(as.getGX(), as.getGY(), as.getPower());
-					game.removeShell(i);
-				}
+					game.shellStep(i);
+					if(game.isExplode(game.getShell(i)))
+					{
+						game.explode(game.getShell(i).getGX(), game.getShell(i).getGY(), game.getShell(i).getPower());
+						game.removeShell(i);
+					}
+				}catch(Exception excs) {}
 			}
 			try 
 			{
