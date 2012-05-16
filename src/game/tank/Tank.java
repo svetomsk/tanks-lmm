@@ -1,7 +1,10 @@
 package game.tank;
 
 import game.main.Game;
+
 import java.util.Calendar;
+
+import android.util.Log;
 
 public class Tank {
 

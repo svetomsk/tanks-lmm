@@ -44,8 +44,7 @@ public class MainView extends View
 	{
 		super(c);
 		this.df = df;
-		piclib = new PicLibrary(getResources());	            
-        game = new Game(df, 3, 10, "Normal", this);
+		piclib = new PicLibrary(getResources());	  
 		// создаем джойстик
 		js = BitmapFactory.decodeResource(getResources(), R.drawable.control);
 		fieldMatrix = new Matrix();
@@ -192,10 +191,10 @@ public class MainView extends View
 			replaceTank();
 		}
 		renderField(c);	// рисуем поле
+		renderTanks(c); // рисуем танки
 		renderShells(c); // рисуем снаряды
 		renderJoystick(c); // рисуем джойстик
-		renderPoint(c); // для джойстика	
-		renderTanks(c); // рисуем танки
+		renderPoint(c); // для джойстика			
 	}	
 		
 	public void renderField(Canvas s)

@@ -34,18 +34,17 @@ public class TanksActivity extends Activity{
         
         sp = new Separator(getResources());
 		f = new Field(sp.interpritaitonPicture(1), getResources());
-        mv = new MainView(this, f);
-        
-        tmanager = new ThreadManager(mv, mv.getGame());
+        mv = new MainView(this, f);        
 		isMain = false;
     }
     // слушатель кнопки Start
     public void newgameButtonEvent(View w)
     {
     	setContentView(mv);
-		isMain = true;
-		tmanager.reborn();
+		isMain = true;		
 		mv.createNewGame();
+        tmanager = new ThreadManager(mv, mv.getGame());
+        tmanager.reborn();
     }
     
     // слушатель кнопки About
