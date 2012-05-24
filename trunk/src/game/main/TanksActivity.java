@@ -56,7 +56,6 @@ public class TanksActivity extends Activity{
     public void exitButtonEvent(View w) throws InterruptedException
     {
     	// may be saving or simply exit
-    	tmanager.destroy();
     	System.exit(0);
     }
     

@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -30,8 +31,7 @@ public class MainView extends View
 	private Game game;
 	private PicLibrary piclib;
 	private Matrix transl, scale, rotation, fieldMatrix;
-	private GestureDetector gdScroll; // слушатель жестов
-	private int pointerCount;
+	private GestureDetector gdJoy, gdPole; // слушатель жестов
 	private Field df;
 	
 	private Bitmap js; // битмэп для джойстика
@@ -66,24 +66,108 @@ public class MainView extends View
 	}
 	
 	@Override
-	public boolean onTouchEvent(MotionEvent ev) 
+	public boolean onTouchEvent(MotionEvent event) 
 	{		
-		pointerCount = ev.getPointerCount();
-		if(pointerCount == 1)
+		int action = event.getAction();
+		if(event.getPointerCount() <= 1)
 		{
-			if(ev.getAction() == MotionEvent.ACTION_UP && move)
+			if(event.getX() > 0 && event.getX() < cw && event.getY() > height - ch)
+			{
+				if(event.getAction() == MotionEvent.ACTION_UP)
+				{
+					move = false;
+				}
+				else
+				{
+					gdJoy.onTouchEvent(event);
+				}
+			}
+			else
 			{
 				move = false;
+				gdPole.onTouchEvent(event);
 			}
-			gdScroll.onTouchEvent(ev);
 		}
-		
+		else if(event.getPointerCount() == 2)
+		{
+			int actionEvent = action & MotionEvent.ACTION_MASK;
+			int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_ID_MASK) 
+				    >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+			int ty = (int)event.getY(pointerIndex);
+			int tx = (int)event.getX(pointerIndex);
+			if(tx > 0 && tx < cw && ty > height - ch)
+			{
+				// на второе нажатие на джойстик ничего не делаем
+			}
+			else
+			{
+				// стреляем если нажали на поле
+				if(actionEvent != MotionEvent.ACTION_MOVE)
+				{
+					game.getMainTank().shoot((int)((-x+tx)/length), (int)((-y+ty)/length));
+				}
+				// здесь должна быть прокрутка, но пока ее нет.
+			}
+		}
 		return true;
 	}
 	
-	// создаем простого слушателя нажатий и движений
+
 	private void addListeners()
 	{
+		// слушатель нажатий на джойстик
+		OnGestureListener ogl = new OnGestureListener()
+		{
+
+			@Override
+			public boolean onDown(MotionEvent ev) 
+			{
+				curx = ev.getX();
+				cury = ev.getY();
+				move = true;
+				px = curx;
+				py = cury;				
+				return true;
+			}
+
+			@Override
+			public boolean onFling(MotionEvent arg0, MotionEvent arg1,
+					float arg2, float arg3) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+
+			@Override
+			public void onLongPress(MotionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean onScroll(MotionEvent arg0, MotionEvent arg1,
+					float distanceX, float distanceY) 
+			{
+				px = arg1.getX();
+				py = arg1.getY();;
+				return false;
+			}
+
+			@Override
+			public void onShowPress(MotionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean onSingleTapUp(MotionEvent ev) 
+			{				
+				return false;
+			}
+			
+		};
+		gdJoy = new GestureDetector(ogl);
+		
+		// слушатель нажатий на поле
 		OnGestureListener sol = new OnGestureListener()
 		{
 			// одинарный клик
@@ -92,10 +176,7 @@ public class MainView extends View
 			{		
 				curx = ev.getX();
 				cury = ev.getY();
-				if(!(curx < cw && cury > height - ch)) // если тыкнул на джойстик
-				{
-					game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));
-				}				
+				game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));		
 				return true;
 			}
 			
@@ -105,12 +186,6 @@ public class MainView extends View
 			{
 				curx = e.getX();
 				cury = e.getY();
-				if(curx < cw && cury > height - ch)
-				{
-					move = true;
-					px = curx;
-					py = cury;					
-				}
 				return true;
 			}
 
@@ -126,24 +201,15 @@ public class MainView extends View
 			@Override
 			public boolean onScroll(MotionEvent e1, MotionEvent e2,
 					float distanceX, float distanceY) 
-			{
-				if(!move && pointerCount == 1)
-				{
-					x -= distanceX;
-					y -= distanceY;
-					game.getMainTank().shoot((int)((-x+e2.getX())/length), (int)((-y+e2.getY())/length));
-					if(x > 0) x = 0;
-					if(y > 0) y = 0;	
-					int w = game.getField().width * length;
-					int h = game.getField().height * length;
-					if(x < (width - w)) x = width - w;
-					if(y < (height - h)) y = height - h;
-				}
-				else
-				{
-					px -= distanceX;
-					py -= distanceY;					
-				}
+			{ 
+				x -= distanceX;
+				y -= distanceY;
+				if(x > 0) x = 0;
+				if(y > 0) y = 0;	
+				int w = game.getField().width * length;
+				int h = game.getField().height * length;
+				if(x < (width - w)) x = width - w;
+				if(y < (height - h)) y = height - h;
 				return true;
 			}
 
@@ -154,12 +220,12 @@ public class MainView extends View
 			}			
 
 			@Override
-			public void onLongPress(MotionEvent e) 
+			public void onLongPress(MotionEvent ev) 
 			{
-//				game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));				
+							
 			}
 		};
-		gdScroll = new GestureDetector(sol);
+		gdPole = new GestureDetector(sol);
 	}
 	
 	// рисуем точку для джойстика
