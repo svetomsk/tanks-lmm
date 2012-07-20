@@ -33,7 +33,7 @@ public class MainView extends View
 	private Matrix transl, scale, rotation, fieldMatrix;
 	private GestureDetector gdJoy, gdPole; // слушатель жестов
 	private Field df;
-	
+	private float[] pointers;
 	private Bitmap js; // битмэп для джойстика
 	
 	private int cw = 200, ch = 200; // собственно джойстик, его ширина и высота
@@ -51,12 +51,11 @@ public class MainView extends View
 		transl = new Matrix();
 		rotation = new Matrix();
 		scale = new Matrix();
-		addListeners();
 	}	
 	
 	public void createNewGame()
 	{
-		game = new Game(df, 3, 10, "Normal", this);
+		game = new Game(df, 3, 10, "Big", this);
 	}
 	
 	// возвращаем Game для потоков
@@ -64,170 +63,6 @@ public class MainView extends View
 	{
 		return game;
 	}
-	
-	@Override
-	public boolean onTouchEvent(MotionEvent event) 
-	{		
-		int action = event.getAction();
-		if(event.getPointerCount() <= 1)
-		{
-			if(event.getX() > 0 && event.getX() < cw && event.getY() > height - ch)
-			{
-				if(event.getAction() == MotionEvent.ACTION_UP)
-				{
-					move = false;
-				}
-				else
-				{
-					gdJoy.onTouchEvent(event);
-				}
-			}
-			else
-			{
-				move = false;
-				gdPole.onTouchEvent(event);
-			}
-		}
-		else if(event.getPointerCount() == 2)
-		{
-			int actionEvent = action & MotionEvent.ACTION_MASK;
-			int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_ID_MASK) 
-				    >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-			int ty = (int)event.getY(pointerIndex);
-			int tx = (int)event.getX(pointerIndex);
-			if(tx > 0 && tx < cw && ty > height - ch)
-			{
-				// на второе нажатие на джойстик ничего не делаем
-			}
-			else
-			{
-				// стреляем если нажали на поле
-				if(actionEvent != MotionEvent.ACTION_MOVE)
-				{
-					game.getMainTank().shoot((int)((-x+tx)/length), (int)((-y+ty)/length));
-				}
-				// здесь должна быть прокрутка, но пока ее нет.
-			}
-		}
-		return true;
-	}
-	
-
-	private void addListeners()
-	{
-		// слушатель нажатий на джойстик
-		OnGestureListener ogl = new OnGestureListener()
-		{
-
-			@Override
-			public boolean onDown(MotionEvent ev) 
-			{
-				curx = ev.getX();
-				cury = ev.getY();
-				move = true;
-				px = curx;
-				py = cury;				
-				return true;
-			}
-
-			@Override
-			public boolean onFling(MotionEvent arg0, MotionEvent arg1,
-					float arg2, float arg3) {
-				// TODO Auto-generated method stub
-				return true;
-			}
-
-			@Override
-			public void onLongPress(MotionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public boolean onScroll(MotionEvent arg0, MotionEvent arg1,
-					float distanceX, float distanceY) 
-			{
-				px = arg1.getX();
-				py = arg1.getY();;
-				return false;
-			}
-
-			@Override
-			public void onShowPress(MotionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public boolean onSingleTapUp(MotionEvent ev) 
-			{				
-				return false;
-			}
-			
-		};
-		gdJoy = new GestureDetector(ogl);
-		
-		// слушатель нажатий на поле
-		OnGestureListener sol = new OnGestureListener()
-		{
-			// одинарный клик
-			@Override
-			public boolean onSingleTapUp(MotionEvent ev) 
-			{		
-				curx = ev.getX();
-				cury = ev.getY();
-				game.getMainTank().shoot((int)((-x+ev.getX())/length), (int)((-y+ev.getY())/length));		
-				return true;
-			}
-			
-			// прикосновение
-			@Override
-			public boolean onDown(MotionEvent e) 
-			{
-				curx = e.getX();
-				cury = e.getY();
-				return true;
-			}
-
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2,
-					float velocityX, float velocityY) 
-			{
-				
-				return false;
-			}
-
-			// прокрутка
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2,
-					float distanceX, float distanceY) 
-			{ 
-				x -= distanceX;
-				y -= distanceY;
-				if(x > 0) x = 0;
-				if(y > 0) y = 0;	
-				int w = game.getField().width * length;
-				int h = game.getField().height * length;
-				if(x < (width - w)) x = width - w;
-				if(y < (height - h)) y = height - h;
-				return true;
-			}
-
-			@Override
-			public void onShowPress(MotionEvent ev) 
-			{
-				
-			}			
-
-			@Override
-			public void onLongPress(MotionEvent ev) 
-			{
-							
-			}
-		};
-		gdPole = new GestureDetector(sol);
-	}
-	
 	// рисуем точку для джойстика
 	public void renderPoint(Canvas c)
 	{
@@ -243,6 +78,10 @@ public class MainView extends View
 	{
 		return FPS;
 	}
+	public int getJoyHeight()
+	{
+		return cw;
+	}
 	
 	// собственно прорисовка
 	public void onDraw(Canvas c)
@@ -251,17 +90,41 @@ public class MainView extends View
 	}
 	
 	public void render(Canvas c)
-	{
-		if(move)
-		{
-			replaceTank();
-		}
+	{		
 		renderField(c);	// рисуем поле
 		renderTanks(c); // рисуем танки
 		renderShells(c); // рисуем снаряды
 		renderJoystick(c); // рисуем джойстик
 		renderPoint(c); // для джойстика			
 	}	
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) 
+	{
+		if(event.getAction() == MotionEvent.ACTION_UP)
+		{
+			pointers = null;
+			return true;
+		}
+		int n = event.getPointerCount();
+		Log.i("-----------", ""+n);
+		pointers = new float[n*3];
+		for(int i = 0; i < n; i++)
+		{
+			float x = event.getX(i);
+			float y = event.getY(i);
+			pointers[i*3] = event.getPointerId(i);
+			pointers[i*3+1] = x;
+			pointers[i*3+2] = y;
+			Log.i("xxxxxx", ""+x);
+			Log.i("yyyyyy", ""+y);
+		}
+		return true;
+	}
+	public float[] getPointers()
+	{
+		return pointers;
+	}
 		
 	public void renderField(Canvas s)
 	{
@@ -302,24 +165,30 @@ public class MainView extends View
 		scale.setScale((float)1.0*game.getTField().get(w, q).getWidth()*length/bm.getWidth(), (float)1.0*game.getTField().get(w, q).getWidth()*length/bm.getHeight());
 		transl.setConcat(transl, scale);
 		transl.setConcat(transl, rotation);
-		s.drawBitmap(bm, transl, null);
+		s.drawBitmap(bm, transl, null);		
 		Tank t = game.getTField().get(w, q);
-		for(int i=0;i<t.getWeps().length;i++)
+		try
 		{
-			for(int j=0;j<t.getWeps()[0].length;j++)
+			for(int i=0;i<t.getWeps().length;i++)
 			{
-				if(t.getWeps()[i][j] != null)
+				for(int j=0;j<t.getWeps()[0].length;j++)
 				{
-					Weapon curW = t.getWeps()[i][j];
-					bm = piclib.getBitmapWeapon(curW.getType());
-					transl.setTranslate((t.getX()+i/2)*length-(int)((1-(i%2))*length/2.0)+x, (int)(t.getY()+j/2)*length-(int)((1-(j%2))*length/2.0)+y);
-					rotation.setRotate((float)(curW.getAngle()), bm.getWidth()/2, bm.getHeight()/2);
-					scale.setScale((float)2.0*length/bm.getWidth(), (float)2.0*length/bm.getHeight());
-					transl.setConcat(transl, scale);
-					transl.setConcat(transl, rotation);
-					s.drawBitmap(bm, transl, null);
+					if(t.getWeps()[i][j] != null)
+					{
+						Weapon curW = t.getWeps()[i][j];
+						bm = piclib.getBitmapWeapon(curW.getType());
+						transl.setTranslate((t.getX()+i/2)*length-(int)((1-(i%2))*length/2.0)+x, (int)(t.getY()+j/2)*length-(int)((1-(j%2))*length/2.0)+y);
+						rotation.setRotate((float)(curW.getAngle()), bm.getWidth()/2, bm.getHeight()/2);
+						scale.setScale((float)2.0*length/bm.getWidth(), (float)2.0*length/bm.getHeight());
+						transl.setConcat(transl, scale);
+						transl.setConcat(transl, rotation);
+						s.drawBitmap(bm, transl, null);
+					}
 				}
 			}
+		}catch(Exception exs)
+		{
+			
 		}
 	
 	}
@@ -361,31 +230,42 @@ public class MainView extends View
 	}	
 	
 	// движение танка
-	private void replaceTank()
+//	private void replaceTank()
+//	{
+//		int turn = controlAction(curx, cury);
+//		switch(turn)
+//		{
+//		case 1: {game.getMainTank().move(1); break;}
+//		case 2: {game.getMainTank().move(0); break;}
+//		case 3: {game.getMainTank().move(3); break;}
+//		case 4: {game.getMainTank().move(2); break;}
+//		}
+//	}
+	
+//	private int controlAction(float curx, float cury) // проверяем куда именно нажали на джойстике
+//	{
+//		int x1 = 0; int x2 = cw;
+//		int y1 = (int)height - ch; int y2 = (int)height;
+//		int mainDiagonal = (int)((px - x1) * (y2 - y1) - (py - y1) * (x2 - x1));
+//		int pobDiagonal = (int)((px - x1) * (y1 - y2) - (py - y2) * (x2 - x1));
+//		if(mainDiagonal > 0 && pobDiagonal > 0)
+//			return 1;
+//		if(mainDiagonal > 0 && pobDiagonal < 0)
+//			return 2;
+//		if(mainDiagonal < 0 && pobDiagonal < 0)
+//			return 3;
+//		return 4;
+//	}
+	
+	public int getH()
 	{
-		int turn = controlAction(curx, cury);
-		switch(turn)
-		{
-		case 1: {game.getMainTank().move(1); break;}
-		case 2: {game.getMainTank().move(0); break;}
-		case 3: {game.getMainTank().move(3); break;}
-		case 4: {game.getMainTank().move(2); break;}
-		}
+		Log.i("99999999", ""+height);
+		return (int)height;
 	}
 	
-	private int controlAction(float curx, float cury) // проверяем куда именно нажали на джойстике
+	public int getW()
 	{
-		int x1 = 0; int x2 = cw;
-		int y1 = (int)height - ch; int y2 = (int)height;
-		int mainDiagonal = (int)((px - x1) * (y2 - y1) - (py - y1) * (x2 - x1));
-		int pobDiagonal = (int)((px - x1) * (y1 - y2) - (py - y2) * (x2 - x1));
-		if(mainDiagonal > 0 && pobDiagonal > 0)
-			return 1;
-		if(mainDiagonal > 0 && pobDiagonal < 0)
-			return 2;
-		if(mainDiagonal < 0 && pobDiagonal < 0)
-			return 3;
-		return 4;
+		return (int)width;
 	}
 	
 	@Override
