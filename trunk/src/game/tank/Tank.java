@@ -55,7 +55,7 @@ public class Tank {
 					placeWeapon("Normal", q*2, w*2);
 				}
 			}
-			delay = 300;
+			delay = 0;
 			life = 256;
 		}
 		// зачищаем площадку под появление танка.
@@ -120,6 +120,7 @@ public class Tank {
 	// движение танка
 	public void move(int value)
 	{
+		if(value == -1) return;
 		if(lastDir != value)
 		{
 			if(value == lastDir - 1 || (value == 3 && lastDir == 0))

@@ -32,19 +32,23 @@ public class ShellThread extends Thread
 	{
 		while(state)
 		{		
-			int n = game.getShells().size();	
-			for(int i = 0; i < n; i++)
-			{
-				try
-				{
-					game.shellStep(i);
-					if(game.isExplode(game.getShell(i)))
-					{
-						game.explode(game.getShell(i).getGX(), game.getShell(i).getGY(), game.getShell(i).getPower());
-						game.removeShell(i);
-					}
-				}catch(Exception excs) {}
-			}
+//			int n = game.getShells().size();	
+//			for(int i = 0; i < n; i++)
+//			{
+//				try
+//				{
+//					game.shellStep(i);
+//					if(game.isExplode(game.getShell(i)))
+//					{
+//						game.explode(game.getShell(i).getGX(), game.getShell(i).getGY(), game.getShell(i).getPower());
+//						game.removeShell(i);
+//					}
+//				}catch(Exception excs) {}
+//			}
+			game.getInput().update(game.getMainView().getPointers());
+			game.getInput().change();
+			checkShells();
+			game.getMainView().postInvalidate();
 			try 
 			{
 				Thread.sleep(sleep);
@@ -53,5 +57,21 @@ public class ShellThread extends Thread
 				Log.e("InvalidateThread", "InterrupterExceptino");
 			}
 		}
+	}
+	private void checkShells()
+	{	
+		int n = game.getShells().size();	
+		for(int i = 0; i < n; i++)
+		{
+			try
+			{
+				game.shellStep(i);
+				if(game.isExplode(game.getShell(i)))
+				{
+					game.explode(game.getShell(i).getGX(), game.getShell(i).getGY(), game.getShell(i).getPower());
+					game.removeShell(i);
+				}
+			}catch(Exception excs) {}
+		}		
 	}
 }

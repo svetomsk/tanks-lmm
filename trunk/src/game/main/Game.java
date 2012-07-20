@@ -3,6 +3,7 @@ package game.main;
 import game.field.Field;
 import game.field.TanksField;
 import game.graphics.MainView;
+import game.input.Input;
 import game.tank.Shell;
 import game.tank.Tank;
 
@@ -15,6 +16,9 @@ public class Game {
 	private TanksField tfield;
 	private ArrayList<Shell> shells;
 	
+	private Input input;
+	private MainView mv;
+	
 	public Game(Field f, int xm, int ym, String typem, MainView mv)
 	{
 		field = f;
@@ -23,6 +27,9 @@ public class Game {
 		tfield.spawnTank(mainTank);
 		tfield.spawnTank(new Tank("Big", 10, 3, this));
 		shells = new ArrayList<Shell>();
+		
+		input = new Input(mv);
+		this.mv = mv;
 	}
 
 	public int getShellCount()
@@ -38,6 +45,14 @@ public class Game {
 	public Shell getShell(int index)
 	{
 		return shells.get(index);
+	}
+	public Input getInput()
+	{
+		return input;
+	}
+	public MainView getMainView()
+	{
+		return mv;
 	}
 	
 	public void removeShell(int index)

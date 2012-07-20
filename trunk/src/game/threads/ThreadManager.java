@@ -5,7 +5,7 @@ import game.main.Game;
 public class ThreadManager 
 {
 	// отрисовывающий поток
-	private InvalidateThread it;
+//	private InvalidateThread it;
 	
 	// поток снарядов
 	private ShellThread st;
@@ -21,18 +21,18 @@ public class ThreadManager
 	
 	public void reborn()
 	{		
-		it = new InvalidateThread(m, 200/m.getFPS());
+//		it = new InvalidateThread(m, 200/m.getFPS());
 		st = new ShellThread(g, 50);
-		it.setState(true);
+//		it.setState(true);
 		st.setState(true);
-		it.start();
+//		it.start();
 		st.start();
 	}
 	
 	public void destroy() throws InterruptedException
 	{
-		it.setState(false);
-		it.join();
+//		it.setState(false);
+//		it.join();
 		st.setState(false);
 		st.join();
 	}
