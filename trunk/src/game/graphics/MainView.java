@@ -14,9 +14,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -31,7 +28,6 @@ public class MainView extends View
 	private Game game;
 	private PicLibrary piclib;
 	private Matrix transl, scale, rotation, fieldMatrix;
-	private GestureDetector gdJoy, gdPole; // слушатель жестов
 	private Field df;
 	private float[] pointers;
 	private Bitmap js; // битмэп для джойстика
@@ -107,7 +103,6 @@ public class MainView extends View
 			return true;
 		}
 		int n = event.getPointerCount();
-		Log.i("-----------", ""+n);
 		pointers = new float[n*3];
 		for(int i = 0; i < n; i++)
 		{
@@ -116,8 +111,6 @@ public class MainView extends View
 			pointers[i*3] = event.getPointerId(i);
 			pointers[i*3+1] = x;
 			pointers[i*3+2] = y;
-			Log.i("xxxxxx", ""+x);
-			Log.i("yyyyyy", ""+y);
 		}
 		return true;
 	}
@@ -259,7 +252,6 @@ public class MainView extends View
 	
 	public int getH()
 	{
-		Log.i("99999999", ""+height);
 		return (int)height;
 	}
 	
