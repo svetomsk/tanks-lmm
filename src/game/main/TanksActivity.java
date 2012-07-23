@@ -34,7 +34,7 @@ public class TanksActivity extends Activity{
         
         sp = new Separator(getResources());
 		f = new Field(sp.interpritaitonPicture(1), getResources());
-        mv = new MainView(this, f);        
+        mv = new MainView(this, f, this.getWindowManager().getDefaultDisplay().getWidth(), this.getWindowManager().getDefaultDisplay().getHeight());        
 		isMain = false;
     }
     // слушатель кнопки Start

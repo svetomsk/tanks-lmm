@@ -1,15 +1,14 @@
 package game.input;
 import game.graphics.MainView;
-import android.util.Log;
 
 public class Input{
-	private MainView MainView;
+	private MainView mainView;
 	
 	private Joystick joystick; 
 	public Input(MainView mv)
 	{
-		MainView = mv;
-		joystick = new Joystick(0, 480-mv.getJoyHeight(), mv.getJoyHeight(), 480);
+		mainView = mv;
+		joystick = new Joystick(0, mainView.getH()-mv.getJoyHeight(), mv.getJoyHeight(), mainView.getH());
 	}
 	
 	public void update(float[] arr)
@@ -20,7 +19,7 @@ public class Input{
 	
 	public void change()
 	{
-		MainView.getGame().getMainTank().move(joystick.currentDirection());
+		mainView.getGame().getMainTank().move(joystick.currentDirection());
 	}
 
 }

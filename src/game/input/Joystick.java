@@ -1,6 +1,5 @@
 package game.input;
 
-import android.util.Log;
 
 public class Joystick extends Zone{
 	
