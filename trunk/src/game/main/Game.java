@@ -9,6 +9,8 @@ import game.tank.Tank;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 public class Game {
 	
 	private Tank mainTank;
@@ -27,9 +29,8 @@ public class Game {
 		tfield.spawnTank(mainTank);
 		tfield.spawnTank(new Tank("Big", 10, 3, this));
 		shells = new ArrayList<Shell>();
-		
-		input = new Input(mv);
 		this.mv = mv;
+		input = new Input(this.mv);		
 	}
 
 	public int getShellCount()

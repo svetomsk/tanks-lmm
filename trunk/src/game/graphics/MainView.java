@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -22,7 +23,9 @@ public class MainView extends View
 	private float x=0, y=0; // координаты для скроллирования
 	private float curx=0, cury=0; // текущие координаты от MotionEvent'а
 	private float px = 0, py = 0; // кооридинаты для джойстика
-	private float width, height;
+	private int width, height;
+	private int w, h;
+	private int otslw, otsrw, otslh, otsrh;
 	private int length = 17; // коэфициент масштабирования
 	private int FPS = 300; // frames per second
 	private Game game;
@@ -36,8 +39,8 @@ public class MainView extends View
 	
 	private boolean move = false; // контроллер движения
 	
-	public MainView(Context c, Field df)
-	{
+	public MainView(Context c, Field df, int w ,int h)
+	{		
 		super(c);
 		this.df = df;
 		piclib = new PicLibrary(getResources());	  
@@ -47,11 +50,15 @@ public class MainView extends View
 		transl = new Matrix();
 		rotation = new Matrix();
 		scale = new Matrix();
+		width = w;
+		height = h;
+		this.w = df.width*length;
+		this.h = df.height*length;
 	}	
 	
 	public void createNewGame()
 	{
-		game = new Game(df, 3, 10, "Big", this);
+		game = new Game(df, 3, 10, "Normal", this);
 	}
 	
 	// возвращаем Game для потоков
@@ -59,6 +66,7 @@ public class MainView extends View
 	{
 		return game;
 	}
+	
 	// рисуем точку для джойстика
 	public void renderPoint(Canvas c)
 	{
@@ -86,7 +94,8 @@ public class MainView extends View
 	}
 	
 	public void render(Canvas c)
-	{		
+	{			
+		focus();
 		renderField(c);	// рисуем поле
 		renderTanks(c); // рисуем танки
 		renderShells(c); // рисуем снаряды
@@ -114,6 +123,34 @@ public class MainView extends View
 		}
 		return true;
 	}
+	
+	private void focus()
+	{	
+		int x1 = game.getMainTank().getX()*length;
+		if(x1 > -x + otsrw)
+		{
+			x = x - (x1 - (-x + otsrw));
+			if(x < (width - w)) x = width - w;
+		}
+		if(x1 < -x + otslw)
+		{
+			x = x + (-x + otslw - x1);
+			if(x > 0) x = 0;
+		}
+		
+		int y1 = game.getMainTank().getY()*length;
+		if(y1 > -y + otsrh)
+		{
+			y = y - (y1 - (-y + otsrh));
+			if(y < (height - h)) y = height - h;
+		}
+		if(y1 < -y + otslh)
+		{
+			y = y + (-y + otslh - y1);
+			if(y > 0) y = 0;
+		}	
+	}
+	
 	public float[] getPointers()
 	{
 		return pointers;
@@ -252,12 +289,12 @@ public class MainView extends View
 	
 	public int getH()
 	{
-		return (int)height;
+		return height;
 	}
 	
 	public int getW()
 	{
-		return (int)width;
+		return width;
 	}
 	
 	@Override
@@ -266,7 +303,9 @@ public class MainView extends View
 		super.onSizeChanged(w, h, oldw, oldh);
 		width = w;
 		height = h;
+		otslw = (width*30)/100;
+		otsrw = (width*70)/100;
+		otslh = (height*30)/100;
+		otsrh = (height*70)/100;
 	}
-	
-	
 }
