@@ -2,6 +2,8 @@ package game.main;
 
 import game.field.Field;
 import game.graphics.MainView;
+import game.graphics.Renderer;
+import game.graphics.SurfaceView;
 import game.input.Separator;
 import game.tanks.R;
 import game.threads.ThreadManager;
@@ -19,6 +21,7 @@ public class TanksActivity extends Activity{
 	private Field f;
 	private Separator sp;
 	private MainView mv;
+	private SurfaceView sv;
 	private boolean isMain;
 	// говорящее название
 	private ThreadManager tmanager;
@@ -36,6 +39,10 @@ public class TanksActivity extends Activity{
 		f = new Field(sp.interpritaitonPicture(1), getResources());
         mv = new MainView(this, f, this.getWindowManager().getDefaultDisplay().getWidth(), this.getWindowManager().getDefaultDisplay().getHeight());        
 		isMain = false;
+		
+		sv = new SurfaceView(this);
+		sv.setRenderer(new Renderer());
+		
     }
     // слушатель кнопки Start
     public void newgameButtonEvent(View w)

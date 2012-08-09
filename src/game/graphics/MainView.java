@@ -104,25 +104,34 @@ public class MainView extends View
 	}	
 	
 	@Override
-	public boolean onTouchEvent(MotionEvent event) 
-	{
-		if(event.getAction() == MotionEvent.ACTION_UP)
-		{
-			pointers = null;
-			return true;
-		}
-		int n = event.getPointerCount();
-		pointers = new float[n*3];
-		for(int i = 0; i < n; i++)
-		{
-			float x = event.getX(i);
-			float y = event.getY(i);
-			pointers[i*3] = event.getPointerId(i);
-			pointers[i*3+1] = x;
-			pointers[i*3+2] = y;
-		}
-		return true;
-	}
+	 public boolean onTouchEvent(MotionEvent event) 
+	 {
+		  if(event.getAction() == MotionEvent.ACTION_UP)
+		  {
+			  pointers = null;
+			  return true;
+		  }
+		  int n = event.getPointerCount();
+		  pointers = new float[n*2];
+		  for(int i = 0; i < n; i++)
+		  {
+		   float x = event.getX(i);
+		   float y = event.getY(i);   
+		   pointers[i*2] = x;
+		   pointers[i*2+1] = y;
+		  }
+		  if(event.getActionMasked() == event.ACTION_POINTER_UP)
+		  {
+		   pointers[event.getActionIndex()*2] = -1;
+		   pointers[event.getActionIndex()*2+1] = -1;
+		  }
+		  
+		  return true;
+	 }
+	 public void shoot(float touchx, float touchy)
+	 {  
+		 game.getMainTank().shoot( ((int)(touchx-x))/length , ((int)(touchy-y))/length );  
+	 }
 	
 	private void focus()
 	{	

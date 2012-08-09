@@ -1,37 +1,21 @@
 package game.input;
 
+import game.graphics.MainView;
 
-public class Joystick extends Zone{
-	
-	float pid = -1;
+
+public class Joystick {
 	int x1, y1, x2, y2;
-	private JoystickUp jup;
-	private JoystickDown jdn;
-	private JoystickLeft jlt;
-	private JoystickRight jrt;
-	public Joystick(int x1, int y1, int x2, int y2)
+	private MainView mainView;
+	private Input input;
+	public Joystick(MainView mv, Input input)
 	{
-		this.x1 = x1;
-		this.x2 = x2;
-		this.y1 = y1;
-		this.y2 = y2;
-		jup = new JoystickUp(x1, y1, x2, y2);
-		jdn = new JoystickDown(x1, y1, x2, y2);
-		jlt = new JoystickLeft(x1, y1, x2, y2);
-		jrt = new JoystickRight(x1, y1, x2, y2);
-	}
-	
-	public void checkOut(float[] arr)
-	{
-//		for(int q=0;q<arr.length;q+=3)
-//		{
-//			if(pid == arr[q])
-//			{
-//				if(!isInZone(arr[q+1], arr[q+2])) pid=-1;
-//				return;
-//			}
-//		}
-		pid = -1;
+		mainView = mv;
+		this.input = input;
+		
+		this.x1 = 0;
+		this.x2 = mainView.getJoyHeight();
+		this.y1 = mainView.getH()-mv.getJoyHeight();
+		this.y2 = mainView.getH();
 	}
 	
 	public boolean isInZone(float x, float y)
@@ -41,33 +25,21 @@ public class Joystick extends Zone{
 	
 	public void check(float[] arr)
 	{
-		if(arr != null)
-		for(int q=0;q<arr.length;q+=3)
+		for(int q=0;q<arr.length;q+=2)
 		{
-			if(isInZone(arr[q+1], arr[q+2])) 
+			if(isInZone(arr[q], arr[q+1])) 
 			{
-				pid = arr[q];
-				jup.check(arr[q], arr[q+1], arr[q+2]);
-				jdn.check(arr[q], arr[q+1], arr[q+2]);
-				jlt.check(arr[q], arr[q+1], arr[q+2]);
-				jrt.check(arr[q], arr[q+1], arr[q+2]);
+				int mainDiagonal = (int)((arr[q] - x1) * (y2 - y1) - (arr[q+1] - y1) * (x2 - x1));
+				int pobDiagonal = (int)((arr[q] - x1) * (y1 - y2) - (arr[q+1] - y2) * (x2 - x1));
+				
+				if(mainDiagonal > 0 && pobDiagonal > 0) mainView.getGame().getMainTank().move(1);
+				if(mainDiagonal < 0 && pobDiagonal < 0) mainView.getGame().getMainTank().move(3);
+				if(mainDiagonal < 0 && pobDiagonal > 0) mainView.getGame().getMainTank().move(2);
+				if(mainDiagonal > 0 && pobDiagonal < 0) mainView.getGame().getMainTank().move(0);
+				
+				input.remove(q);
 				return;
 			}
 		}
 	}
-	public boolean isHolded()
-	{
-		return pid!=-1;
-	}
-	
-	public int currentDirection()
-	{
-		if(pid==-1) return -1;
-		if(jup.isHolded()) return 1;
-		if(jdn.isHolded()) return 3;
-		if(jrt.isHolded()) return 0;
-		if(jlt.isHolded()) return 2;
-		return -1;
-	}
-
 }

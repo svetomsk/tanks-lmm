@@ -5,21 +5,27 @@ public class Input{
 	private MainView mainView;
 	
 	private Joystick joystick; 
+	private Pole pole;
+	private float[] arr;
 	public Input(MainView mv)
 	{
 		mainView = mv;
-		joystick = new Joystick(0, mainView.getH()-mv.getJoyHeight(), mv.getJoyHeight(), mainView.getH());
+		
+		joystick = new Joystick(mainView, this);
+		pole = new Pole(mainView, this);
 	}
 	
-	public void update(float[] arr)
+	public void update(float[] array)
 	{
-		joystick.checkOut(arr);
+		if(array == null) return;
+		arr = array.clone();
+		
 		joystick.check(arr);
+		pole.check(arr);
 	}
-	
-	public void change()
+	public void remove(int q)
 	{
-		mainView.getGame().getMainTank().move(joystick.currentDirection());
+		arr[q] = -1;
+		arr[q+1] = -1;
 	}
-
 }
