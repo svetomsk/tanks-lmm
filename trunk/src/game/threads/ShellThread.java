@@ -46,7 +46,6 @@ public class ShellThread extends Thread
 //				}catch(Exception excs) {}
 //			}
 			game.getInput().update(game.getMainView().getPointers());
-			game.getInput().change();
 			checkShells();
 			game.getMainView().postInvalidate();
 			try 

@@ -107,7 +107,7 @@ public class Tank {
 					{
 						if(currentWep.getType().equalsIgnoreCase("Normal"))
 						{
-							g.shoot(new Shell(gx, gy, (loc/2)*((q+1)%2), (loc/2)*((w+1)%2), (int)(r*(tx-gx)/a), (int)(r*(ty-gy)/a), this, loc));
+							g.shoot(new Shell(gx, gy, (loc/2)*((q+1)%2), (loc/2)*((w+1)%2), (int)(r*(tx-gx)/a)+1, (int)(r*(ty-gy)/a)+1, this, loc));
 							currentWep.shootTime(time);
 						}
 					}
